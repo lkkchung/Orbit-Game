@@ -22,6 +22,7 @@ function setup() {
 
   let params = {
     isStatic: true,
+    restitution: 0.2,
   };
 
   bottom = Bodies.rectangle(width / 2, height - 10, width, 20, params);
@@ -29,7 +30,7 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background(0, 100);
   Engine.update(engine, 60);
 
   fill(100);
@@ -51,15 +52,15 @@ class particle {
   constructor(_x, _y) {
     this.rad = random(5, 20);
     let coinToss = [-1, 1];
-    let xForce = random(coinToss) * random(0, 0.1);
-    let yForce = random(coinToss) * random(0, sqrt(0.01 - xForce * xForce));
+    let xForce = random(coinToss) * random(0, 0.05);
+    let yForce = random(coinToss) * random(0, sqrt(0.0025 - xForce * xForce));
     let params = {
-      // friction: 0.01,
-      mass: this.rad * 2,
-      // restitution: 1,
+      friction: 0.01,
+      mass: 0, //this.rad * 2,
+      restitution: 0.6,
       force: {
-        x: xForce,
-        y: yForce
+        x: 0, //xForce,
+        y: 0, //yForce
       }
     };
 
