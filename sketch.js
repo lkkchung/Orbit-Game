@@ -4,6 +4,7 @@ const World = Matter.World;
 const Vector = Matter.Vector;
 const Body = Matter.Body;
 const Events = Matter.Events;
+const Constraint = Matter.Constraint
 
 Matter.use(
   'matter-attractors' // PLUGIN_NAME
@@ -12,6 +13,8 @@ Matter.use(
 let engine;
 let world;
 let sparks = [];
+let planets = [];
+let points = [];
 
 let bottom;
 
@@ -20,22 +23,36 @@ function setup() {
 
   engine = Engine.create();
   world = engine.world;
-  world.gravity.scale = 1e-4;
+  world.gravity.scale = 0; //1e-4;
 
-  let params = {
-    isStatic: true,
-    restitution: 0.2,
-  };
+  for (let i = 0; i < 1; i++) {
+    planets[i] = new planet();
+  }
 
-  bottom = Bodies.rectangle(width / 2, height - 10, width, 20, params);
-  World.add(engine.world, bottom);
+  let rows = 20;
+  let columns = 20;
+
+  let xSpacing = width / columns;
+  let ySpacing = height / rows;
+
+  for (let i = 0; i < rows; i++) {
+    points[i] = [];
+    for (let j = 0; j < columns; j++) {
+      let xCoord = i * xSpacing + xSpacing / 2;
+      let yCoord = j * ySpacing + ySpacing / 2;
+
+      points[i][j] = new gravitationalField(xCoord, yCoord);
+    }
+  }
+
+
 }
 
 function draw() {
-  background(0, 100);
+  background(0);
   Engine.update(engine, 60);
   Events.on(engine, 'collisionStart', collision);
-  sparks.push(new particle(mouseX, mouseY));
+  // sparks.push(new particle(mouseX, mouseY));
 
   function collision(event) {
     let pairs = event.pairs;
@@ -45,67 +62,25 @@ function draw() {
     }
 
   }
-
-  fill(100);
-  rectMode(CENTER);
-  rect(width / 2, height - 10, width, 20);
+  for (let i = 0; i < points.length; i++) {
+    for (let j = 0; j < points[i].length; j++) {
+      points[i][j].render();
+    }
+  }
 
   for (let i = 0; i < sparks.length; i++) {
     sparks[i].render();
     i -= sparks[i].update(i);
   }
+
+  for (let i = 0; i < planets.length; i++) {
+    planets[i].render();
+  }
 }
 
 function mousePressed() {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 1; i++) {
     sparks.push(new particle(mouseX, mouseY));
-  }
-}
-
-class particle {
-  constructor(_x, _y) {
-    this.rad = random(5, 20);
-    let coinToss = [-1, 1];
-    let xForce = random(coinToss) * random(0, 0.05);
-    let yForce = random(coinToss) * random(0, sqrt(0.0025 - xForce * xForce));
-    let params = {
-      friction: 0.01,
-      mass: this.rad * 2,
-      restitution: 0.9,
-      force: {
-        x: xForce,
-        y: yForce
-      }
-    };
-
-    this.body = Bodies.circle(_x, _y, this.rad, params);
-    World.add(engine.world, this.body);
-    // console.log(this.body.position.y);
-    // console.log(this.body);
-  }
-
-  update(_i) {
-    let originalRad = this.rad;
-    this.rad -= 0.2;
-    Matter.Body.scale(this.body, this.rad / originalRad, this.rad / originalRad);
-
-    if (this.rad < 1) {
-      removeItem(_i);
-      World.remove(world, this.body);
-      return 1;
-    }
-    return 0;
-  }
-
-  render() {
-    fill(255);
-    noStroke();
-    ellipse(this.body.position.x, this.body.position.y, this.rad * 2, this.rad * 2);
-
-    if (this.body.position.x > width * 2 || this.body.position.x < width * -1 ||
-      this.body.position.y > height * 2 || this.body.position.x < height * -1) {
-      World.remove(engine.world, this.body);
-    }
   }
 }
 
