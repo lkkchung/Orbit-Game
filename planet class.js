@@ -1,8 +1,8 @@
 class planet {
-  constructor() {
-    let x = width / 2; //random(100, width - 100); //width / 2;
-    let y = height / 2; //random(100, height - 100); //height / 2;
-    this.rad = 50; //random(50, 150);
+  constructor(_x, _y, _r) {
+    let x = _x; //random(100, width - 100); //width / 2;
+    let y = _y; //random(100, height - 100); //height / 2;
+    this.rad = _r; //random(50, 150);
     this.counter = [0, 8, 16];
 
     this.color = {
@@ -32,10 +32,9 @@ class planet {
   }
 
   render() {
-    this.body.position.x = mouseX;
-    this.body.position.y = mouseY;
     let x = this.body.position.x;
     let y = this.body.position.y;
+
     let diam = this.rad * 2;
     fill(this.color.r, this.color.g, this.color.b);
     ellipse(x, y, diam, diam);

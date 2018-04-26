@@ -17,12 +17,17 @@ let world;
 let sparks = [];
 let planets = [];
 let points = [];
+let rockets = [];
 
 let title;
+let sprayTitle = [];
+
+let levelIndex = 0;
+let levelStart = true;
 
 
 function preload() {
-  title = loadImage()
+  title = loadImage('assets/Title.png');
 
 }
 
@@ -52,15 +57,33 @@ function setup() {
 
 function draw() {
   background(0);
-  Engine.update(engine, 60);
-  Events.on(engine, 'collisionStart', collision);
-  // sparks.push(new particle(mouseX, mouseY));
-
+  if (levelIndex == 0) {
+    startMenu();
+  } else {
+    if (levelStart == true) {
+      if (levelIndex == 1) {
+        level1();
+      }
+      if (levelIndex == 2) {
+        level2();
+      }
+      if (levelIndex == 3) {
+        level3();
+      }
+      if (levelIndex == 4) {
+        level4();
+      }
+      if (levelIndex == 5) {
+        level5();
+      }
+    }
+    drawLevels();
+  }
 }
 
 function mousePressed() {
   for (let i = 0; i < 1; i++) {
-    sparks.push(new particle(mouseX, mouseY));
+    rockets.push(new rocket(mouseX, mouseY));
   }
 }
 
