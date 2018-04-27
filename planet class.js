@@ -15,6 +15,7 @@ class planet {
       isStatic: true,
       friction: 0.01,
       mass: this.rad,
+      label: 'planet',
       plugin: {
         attractors: [MatterAttractors.Attractors.gravity
           // function(bodyA, bodyB) {
@@ -29,6 +30,8 @@ class planet {
 
     this.body = Bodies.circle(x, y, this.rad, params);
     World.add(engine.world, this.body);
+
+    console.log(this.body);
   }
 
   render() {

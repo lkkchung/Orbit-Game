@@ -1,47 +1,47 @@
 class rocket {
-  constructor(_x, _y) {
+  constructor(_x, _y, _vX, _vY) {
     let params = {
       frictionAir: 0,
-      mass: 1e-4
-      // force: {
-      //   x: 1,
-      //   y: 0,
-      // }
+      mass: 1e-4,
+      restitution: 0.8,
+      label: 'rocket'
     }
     this.body = Bodies.circle(_x, _y, 10, params);
     World.add(engine.world, this.body);
 
     Body.setVelocity(this.body, {
-      x: 5,
-      y: 0
+      x: _vX,
+      y: _vY
     });
 
     this.lastPos = {
       x: _x,
       y: _y
     };
+    this.countdown = 100;
+
+    console.log(this.body);
   }
 
   update() {
     let x = this.body.position.x;
     let y = this.body.position.y;
 
-    // let eachDir = [];
-    let gDir = Vector.sub(planets[0].body.position, this.body.position);
-    // console.log(gDir);
-    // for(let i = 0; i < planets.length; i++){
-    //
-    // }
-    let dSquared = Vector.magnitudeSquared(gDir);
     let g = 0.05;
-    let gMag = g * planets[0].body.mass * this.body.mass / dSquared;
 
-    let gForce = Vector.mult(Vector.normalise(gDir), gMag);
+    let gForce = Vector.create(0, 0);
 
-    let newVelocity = Vector.add(this.body.velocity, gDir);
+    for (let i = 0; i < planets.length; i++) {
+      let eachDir = Vector.sub(planets[i].body.position, this.body.position);
+      let dSquared = Vector.magnitudeSquared(eachDir);
+      let eachMag = g * planets[i].body.mass * this.body.mass / dSquared;
+      let eachForce = Vector.mult(Vector.normalise(eachDir), eachMag);
+
+      gForce = Vector.add(gForce, eachForce);
+    }
 
     Body.applyForce(this.body, this.body.position, gForce);
-
+    this.countdown -= 1;
   }
 
   render() {
@@ -71,22 +71,30 @@ class rocket {
       y: y
     };
   }
+
+  kill(_i) {
+    let x = this.body.position.x;
+    let y = this.body.position.y;
+    let velX = this.body.velocity.x;
+    let velY = this.body.velocity.y;
+
+    removeItem(2, _i);
+    World.remove(world, this.body);
+    // console.log("killing rocket");
+    explosion(x, y, velX, velY);
+  }
 }
 
-class particle {
-  constructor(_x, _y) {
-    this.rad = 5; //random(5, 20);
-    let coinToss = [-1, 1];
-    let xForce = random(coinToss) * random(0, 0.2);
-    let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
+class spark {
+  constructor(_x, _y, _vX, _vY) {
+    this.rad = random(2, 5);
+    // let coinToss = [-1, 1];
+    // let xForce = random(coinToss) * random(0, 0.2);
+    // let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
     let params = {
       friction: 0.01,
-      mass: this.rad * 4,
+      mass: this.rad * 0.01,
       restitution: 0.9,
-      force: {
-        x: 0.1 / 2,
-        y: 0
-      }
     };
 
     this.body = Bodies.circle(_x, _y, this.rad, params);
@@ -94,34 +102,53 @@ class particle {
     // console.log(this.body.position.y);
     // console.log(this.body);
 
-    this.countdown = 10;
+    Body.setVelocity(this.body, {
+      x: random(_vX - 5, _vX + 5),
+      y: random(_vY - 5, _vY + 5)
+    });
   }
 
-  update(_i) {
+  update() {
     let originalRad = this.rad;
-    // this.rad -= 0.2;
+    this.rad -= 0.2;
     Matter.Body.scale(this.body, this.rad / originalRad, this.rad / originalRad);
 
-    this.countdown -= 0.01;
+    let g = 0.05;
 
-    if (this.countdown < 0.01) {
-      removeItem(_i);
-      World.remove(world, this.body);
-      return 1;
+    let gForce = Vector.create(0, 0);
+
+    for (let i = 0; i < planets.length; i++) {
+      let eachDir = Vector.sub(planets[i].body.position, this.body.position);
+      let dSquared = Vector.magnitudeSquared(eachDir);
+      let eachMag = g * planets[i].body.mass * this.body.mass / dSquared;
+      let eachForce = Vector.mult(Vector.normalise(eachDir), eachMag);
+
+      gForce = Vector.add(gForce, eachForce);
     }
-    return 0;
+
+    Body.applyForce(this.body, this.body.position, gForce);
   }
 
   render() {
     let x = this.body.position.x;
     let y = this.body.position.y;
-    fill(255);
-    noStroke();
+    // fill(255);
+    // noStroke();
+    stroke(255);
+    strokeWeight(1);
+    noFill();
     ellipse(x, y, this.rad * 2, this.rad * 2);
 
     if (x > width * 2 || x < width * -1 ||
       y > height * 2 || x < height * -1) {
       World.remove(engine.world, this.body);
+    }
+  }
+
+  kill(_i) {
+    if (this.rad <= 0) {
+      removeItem(3, _i);
+      World.remove(world, this.body);
     }
   }
 }

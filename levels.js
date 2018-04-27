@@ -57,34 +57,50 @@ function startMenu() {
 function drawLevels() {
   Engine.update(engine, 60);
   Events.on(engine, 'collisionStart', collision);
-  // sparks.push(new particle(mouseX, mouseY));
+  // sparks.push(new spark(mouseX, mouseY));
 
   function collision(event) {
     let pairs = event.pairs;
     for (let i = 0; i < pairs.length; i++) {
-      let bodyA = pairs[i].bodyA;
-      let bodyB = pairs[i].bodyB;
-    }
+      let bodyA = pairs[i].bodyA.label;
+      let bodyB = pairs[i].bodyB.label;
 
+      if (bodyA === 'rocket') {
+        killRocket(pairs[i].bodyA.id);
+        // console.log("collision!");
+        // console.log(pairs[i].bodyA.id);
+      }
+      if (bodyB === 'rocket') {
+        killRocket(pairs[i].bodyB.id);
+        // deadRockets.push(pairs[i].bodyB.id);
+        // console.log("collision!");
+        // console.log(pairs[i].bodyB.id);
+      }
+
+
+    }
   }
+
   for (let i = 0; i < points.length; i++) {
     for (let j = 0; j < points[i].length; j++) {
       points[i][j].render();
     }
   }
 
-  for (let i = 0; i < sparks.length; i++) {
+  for (let i = sparks.length - 1; i >= 0; i--) {
     sparks[i].render();
-    i -= sparks[i].update(i);
+    sparks[i].update();
+    sparks[i].kill(i);
   }
 
-  for (let i = 0; i < planets.length; i++) {
+  for (let i = planets.length - 1; i >= 0; i--) {
     planets[i].render();
   }
 
-  for (let i = 0; i < rockets.length; i++) {
+  for (let i = rockets.length - 1; i >= 0; i--) {
     rockets[i].render();
     rockets[i].update();
+    // rockets[i].kill(i);
   }
 
 }
@@ -108,6 +124,7 @@ function level1() {
   //
   for (let i = 0; i < 1; i++) {
     planets[i] = new planet(width / 2, height / 2, 50);
+    // planets[i] = new planet(random(width), random(height), random(20, 80));
   }
   levelStart = false;
 }

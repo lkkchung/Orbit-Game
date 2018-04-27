@@ -18,12 +18,14 @@ let sparks = [];
 let planets = [];
 let points = [];
 let rockets = [];
+let deadRockets = [];
 
 let title;
 let sprayTitle = [];
 
 let levelIndex = 0;
 let levelStart = true;
+let messageIndex = 0;
 
 
 function preload() {
@@ -32,12 +34,16 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(800, 600);
 
   engine = Engine.create();
   world = engine.world;
+
+  engine.timing.timeScale = 1;
+
   world.gravity.scale = 0; //1e-4;
   world.frictionAir = 0;
+
 
 }
 
@@ -69,10 +75,32 @@ function draw() {
 
 function mousePressed() {
   for (let i = 0; i < 1; i++) {
-    rockets.push(new rocket(mouseX, mouseY));
+    rockets.push(new rocket(mouseX, mouseY, 10, 0));
   }
 }
 
-function removeItem(_i) {
-  sparks.splice(_i, 1);
+function killRocket(_id) {
+  for (let i = 0; i < rockets.length; i++) {
+    if (rockets[i].body.id === _id) {
+      rockets[i].kill(i);
+    }
+  }
+}
+
+function removeItem(_item, _index) {
+  if (_item == 1) {
+    planets.splice(_index, 1);
+  }
+  if (_item == 2) {
+    rockets.splice(_index, 1);
+  }
+  if (_item == 3) {
+    sparks.splice(_index, 1);
+  }
+}
+
+function explosion(_x, _y, _vX, _vY) {
+  for (let i = 0; i < 20; i++) {
+    sparks.push(new spark(_x, _y, _vX, _vY));
+  }
 }
