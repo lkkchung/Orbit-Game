@@ -38,8 +38,8 @@ let levelFlow = {
 }
 
 //inputs
-let angleSlider;
-let powerSlider;
+let angleValue = 0;
+let powerValue = 2;
 
 
 function preload() {
@@ -57,15 +57,6 @@ function setup() {
 
   world.gravity.scale = 0; //1e-4;
   world.frictionAir = 0;
-
-  angleSlider = createSlider(0, 2 * PI, 0);
-  angleSlider.position(65, 10);
-  angleSlider.style('width', '80px');
-
-  powerSlider = createSlider(0, 10, 0);
-  powerSlider.position(65, 40);
-  powerSlider.style('width', '80px');
-
 }
 
 function draw() {
@@ -77,6 +68,10 @@ function draw() {
   textAlign(RIGHT);
   text("ANGLE", 55, 24);
   text("POWER", 55, 54);
+
+  textAlign(LEFT);
+  text(int(degrees(angleValue)), 60, 24);
+  text(int(powerValue * 10), 60, 54);
 
 
 
@@ -102,19 +97,43 @@ function draw() {
     }
     drawLevels();
   }
+
+  if (keyIsDown(LEFT_ARROW)) {
+    powerValue -= 0.05;
+    if (powerValue <= 2) {
+      powerValue = 2;
+    }
+  } else if (keyIsDown(RIGHT_ARROW)) {
+    powerValue += 0.05;
+    if (powerValue >= 12) {
+      powerValue = 12;
+    }
+  }
+
+  if (keyIsDown(UP_ARROW)) {
+    angleValue -= PI / 360;
+    if (angleValue <= -PI / 2) {
+      angleValue = -PI / 2;
+    }
+  } else if (keyIsDown(DOWN_ARROW)) {
+    angleValue += PI / 360;
+    if (angleValue >= PI / 2) {
+      angleValue = PI / 2;
+    }
+  }
 }
 
 function drawLevels() {
   Engine.update(engine, 60);
   Events.on(engine, 'collisionStart', collision);
 
-  stroke(200 * sin(degrees(frameCount * 0.001)) + 50);
+  stroke(100 * sin(degrees(frameCount * 0.001)) + 200);
   noFill();
   strokeWeight(1);
 
   push();
   translate(width / 2, 150);
-  rotate(angleSlider.value());
+  rotate(angleValue);
   beginShape();
   vertex(10, 0);
   vertex(-2.5, -5);
@@ -145,12 +164,6 @@ function drawLevels() {
     }
   }
 
-  for (let i = sparks.length - 1; i >= 0; i--) {
-    sparks[i].render();
-    sparks[i].update();
-    sparks[i].kill(i);
-  }
-
   for (let i = planets.length - 1; i >= 0; i--) {
     planets[i].render();
   }
@@ -161,15 +174,22 @@ function drawLevels() {
     // rockets[i].kill(i);
   }
 
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    sparks[i].render();
+    sparks[i].update();
+    sparks[i].kill(i);
+  }
 }
 
-function mousePressed() {
-  if (levelFlow.stage == 1) {
-    for (let i = 0; i < 1; i++) {
-      let ang = angleSlider.value();
-      let pow = powerSlider.value();
-      rockets.push(new rocket(width / 2, 150, pow * cos(ang), pow * sin(ang)));
-      explosion(width / 2, 150, pow * cos(ang + PI), pow * sin(ang + PI));
+function keyPressed() {
+  if (keyCode == 32) {
+    if (levelFlow.stage == 1) {
+      for (let i = 0; i < 1; i++) {
+        let ang = angleValue;
+        let pow = powerValue;
+        rockets.push(new rocket(width / 2, 150, pow * cos(ang), pow * sin(ang)));
+        explosion(width / 2, 150, pow * cos(ang + PI), pow * sin(ang + PI));
+      }
     }
   }
 }

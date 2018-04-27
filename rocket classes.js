@@ -87,7 +87,7 @@ class rocket {
 
 class spark {
   constructor(_x, _y, _vX, _vY) {
-    this.rad = random(2, 5);
+    this.rad = random(0.5, 2);
     // let coinToss = [-1, 1];
     // let xForce = random(coinToss) * random(0, 0.2);
     // let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
@@ -107,8 +107,8 @@ class spark {
     // console.log(this.body);
 
     Body.setVelocity(this.body, {
-      x: 1.2 * random(_vX, _vX),
-      y: 1.2 * random(_vY, _vY)
+      x: 1.2 * random(_vX - 2, _vX + 2),
+      y: 1.2 * random(_vY - 2, _vY + 2)
     });
   }
 
