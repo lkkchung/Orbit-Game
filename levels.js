@@ -54,77 +54,29 @@ function startMenu() {
 //   }
 // }
 
-function drawLevels() {
-  Engine.update(engine, 60);
-  Events.on(engine, 'collisionStart', collision);
-  // sparks.push(new spark(mouseX, mouseY));
-
-  function collision(event) {
-    let pairs = event.pairs;
-    for (let i = 0; i < pairs.length; i++) {
-      let bodyA = pairs[i].bodyA.label;
-      let bodyB = pairs[i].bodyB.label;
-
-      if (bodyA === 'rocket') {
-        killRocket(pairs[i].bodyA.id);
-        // console.log("collision!");
-        // console.log(pairs[i].bodyA.id);
-      }
-      if (bodyB === 'rocket') {
-        killRocket(pairs[i].bodyB.id);
-        // deadRockets.push(pairs[i].bodyB.id);
-        // console.log("collision!");
-        // console.log(pairs[i].bodyB.id);
-      }
-
-
-    }
-  }
-
-  for (let i = 0; i < points.length; i++) {
-    for (let j = 0; j < points[i].length; j++) {
-      points[i][j].render();
-    }
-  }
-
-  for (let i = sparks.length - 1; i >= 0; i--) {
-    sparks[i].render();
-    sparks[i].update();
-    sparks[i].kill(i);
-  }
-
-  for (let i = planets.length - 1; i >= 0; i--) {
-    planets[i].render();
-  }
-
-  for (let i = rockets.length - 1; i >= 0; i--) {
-    rockets[i].render();
-    rockets[i].update();
-    // rockets[i].kill(i);
-  }
-
-}
-
 function level1() {
-  // let rows = 20;
-  // let columns = 20;
-  //
-  // let xSpacing = width / columns;
-  // let ySpacing = height / rows;
-  //
-  // for (let i = 0; i < rows; i++) {
-  //   points[i] = [];
-  //   for (let j = 0; j < columns; j++) {
-  //     let xCoord = i * xSpacing + xSpacing / 2;
-  //     let yCoord = j * ySpacing + ySpacing / 2;
-  //
-  //     points[i][j] = new gravitationalField(xCoord, yCoord);
-  //   }
-  // }
-  //
-  for (let i = 0; i < 1; i++) {
-    planets[i] = new planet(width / 2, height / 2, 50);
-    // planets[i] = new planet(random(width), random(height), random(20, 80));
+  if (levelFlow.stage == 0) {
+    textAlign(CENTER);
+    push();
+    stroke(255);
+    noFill();
+    translate(width / 2, height / 2);
+    strokeWeight(1);
+    scale(1);
+    textSize(48);
+    text("LEVEL 1", 0, 0);
+    pop();
+
+    levelFlow.titleCountdown -= 1.5;
+    if (levelFlow.titleCountdown <= 0) {
+      levelFlow.stage = 1;
+    }
+
+  } else if (levelFlow.stage == 1) {
+    for (let i = 0; i < 1; i++) {
+      planets[i] = new planet(width / 2, height / 2, 50);
+      // planets[i] = new planet(random(width), random(height), random(20, 80));
+    }
+    levelStart = false;
   }
-  levelStart = false;
 }

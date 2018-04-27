@@ -53,7 +53,7 @@ class rocket {
 
     stroke(255);
     noFill();
-    strokeWeight(0.5);
+    strokeWeight(1);
 
     push();
     translate(x, y);
@@ -92,9 +92,13 @@ class spark {
     // let xForce = random(coinToss) * random(0, 0.2);
     // let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
     let params = {
-      friction: 0.01,
+      friction: 0.9,
       mass: this.rad * 0.01,
       restitution: 0.9,
+      collisionFilter: {
+        category: 4,
+        mask: 4
+      }
     };
 
     this.body = Bodies.circle(_x, _y, this.rad, params);
@@ -103,14 +107,14 @@ class spark {
     // console.log(this.body);
 
     Body.setVelocity(this.body, {
-      x: random(_vX - 5, _vX + 5),
-      y: random(_vY - 5, _vY + 5)
+      x: 1.2 * random(_vX, _vX),
+      y: 1.2 * random(_vY, _vY)
     });
   }
 
   update() {
     let originalRad = this.rad;
-    this.rad -= 0.2;
+    this.rad -= 0.08;
     Matter.Body.scale(this.body, this.rad / originalRad, this.rad / originalRad);
 
     let g = 0.05;
@@ -134,7 +138,7 @@ class spark {
     let y = this.body.position.y;
     // fill(255);
     // noStroke();
-    stroke(255);
+    stroke(255, 200, 0);
     strokeWeight(1);
     noFill();
     ellipse(x, y, this.rad * 2, this.rad * 2);
