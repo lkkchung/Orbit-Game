@@ -1,19 +1,47 @@
 class rocket {
   constructor(_x, _y) {
     let params = {
-      mass: 500,
-      force: {
-        x: 1,
-        y: 0,
-      }
+      frictionAir: 0,
+      mass: 1e-4
+      // force: {
+      //   x: 1,
+      //   y: 0,
+      // }
     }
     this.body = Bodies.circle(_x, _y, 10, params);
     World.add(engine.world, this.body);
+
+    Body.setVelocity(this.body, {
+      x: 5,
+      y: 0
+    });
 
     this.lastPos = {
       x: _x,
       y: _y
     };
+  }
+
+  update() {
+    let x = this.body.position.x;
+    let y = this.body.position.y;
+
+    // let eachDir = [];
+    let gDir = Vector.sub(planets[0].body.position, this.body.position);
+    // console.log(gDir);
+    // for(let i = 0; i < planets.length; i++){
+    //
+    // }
+    let dSquared = Vector.magnitudeSquared(gDir);
+    let g = 0.05;
+    let gMag = g * planets[0].body.mass * this.body.mass / dSquared;
+
+    let gForce = Vector.mult(Vector.normalise(gDir), gMag);
+
+    let newVelocity = Vector.add(this.body.velocity, gDir);
+
+    Body.applyForce(this.body, this.body.position, gForce);
+
   }
 
   render() {
@@ -25,17 +53,17 @@ class rocket {
 
     stroke(255);
     noFill();
-    strokeWeight(2);
+    strokeWeight(0.5);
 
     push();
     translate(x, y);
     rotate(angle);
     beginShape();
-    vertex(20, 0);
-    vertex(-5, -10);
-    vertex(5, 0);
-    vertex(-5, 10);
-    vertex(20, 0);
+    vertex(10, 0);
+    vertex(-2.5, -5);
+    vertex(2.5, 0);
+    vertex(-2.5, 5);
+    vertex(10, 0);
     endShape();
     pop();
     this.lastPos = {

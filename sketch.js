@@ -6,9 +6,9 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const Constraint = Matter.Constraint
 
-Matter.use(
-  'matter-attractors' // PLUGIN_NAME
-);
+// Matter.use(
+//   'matter-attractors' // PLUGIN_NAME
+// );
 
 let engine;
 let world;
@@ -37,22 +37,8 @@ function setup() {
   engine = Engine.create();
   world = engine.world;
   world.gravity.scale = 0; //1e-4;
+  world.frictionAir = 0;
 
-  // let rows = 20;
-  // let columns = 20;
-  //
-  // let xSpacing = width / columns;
-  // let ySpacing = height / rows;
-  //
-  // for (let i = 0; i < rows; i++) {
-  //   points[i] = [];
-  //   for (let j = 0; j < columns; j++) {
-  //     let xCoord = i * xSpacing + xSpacing / 2;
-  //     let yCoord = j * ySpacing + ySpacing / 2;
-  //
-  //     points[i][j] = new gravitationalField(xCoord, yCoord);
-  //   }
-  // }
 }
 
 function draw() {

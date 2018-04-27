@@ -84,11 +84,28 @@ function drawLevels() {
 
   for (let i = 0; i < rockets.length; i++) {
     rockets[i].render();
+    rockets[i].update();
   }
 
 }
 
 function level1() {
+  // let rows = 20;
+  // let columns = 20;
+  //
+  // let xSpacing = width / columns;
+  // let ySpacing = height / rows;
+  //
+  // for (let i = 0; i < rows; i++) {
+  //   points[i] = [];
+  //   for (let j = 0; j < columns; j++) {
+  //     let xCoord = i * xSpacing + xSpacing / 2;
+  //     let yCoord = j * ySpacing + ySpacing / 2;
+  //
+  //     points[i][j] = new gravitationalField(xCoord, yCoord);
+  //   }
+  // }
+  //
   for (let i = 0; i < 1; i++) {
     planets[i] = new planet(width / 2, height / 2, 50);
   }

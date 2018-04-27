@@ -14,7 +14,7 @@ class planet {
     let params = {
       isStatic: true,
       friction: 0.01,
-      mass: this.rad * 20,
+      mass: this.rad,
       plugin: {
         attractors: [MatterAttractors.Attractors.gravity
           // function(bodyA, bodyB) {
@@ -48,7 +48,7 @@ class gravitationalField {
       y: _y
     };
     this.point = Bodies.circle(_x, _y + 2, 0.5, {
-      mass: 20,
+      mass: 0.5,
       collisionFilter: {
         category: 4,
         mask: 4
