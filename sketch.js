@@ -188,7 +188,7 @@ function keyPressed() {
         let ang = angleValue;
         let pow = powerValue;
         rockets.push(new rocket(width / 2, 150, pow * cos(ang), pow * sin(ang)));
-        explosion(width / 2, 150, pow * cos(ang + PI), pow * sin(ang + PI));
+        explosion(width / 2, 150, pow * cos(ang + PI), pow * sin(ang + PI), 2);
       }
     }
   }
@@ -214,8 +214,8 @@ function removeItem(_item, _index) {
   }
 }
 
-function explosion(_x, _y, _vX, _vY) {
+function explosion(_x, _y, _vX, _vY, _type) {
   for (let i = 0; i < 20; i++) {
-    sparks.push(new spark(_x, _y, _vX, _vY));
+    sparks.push(new spark(_x, _y, _vX, _vY, _type));
   }
 }

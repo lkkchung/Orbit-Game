@@ -81,12 +81,12 @@ class rocket {
     removeItem(2, _i);
     World.remove(world, this.body);
     // console.log("killing rocket");
-    explosion(x, y, velX, velY);
+    explosion(x, y, velX, velY, 1);
   }
 }
 
 class spark {
-  constructor(_x, _y, _vX, _vY) {
+  constructor(_x, _y, _vX, _vY, _type) {
     this.rad = random(0.5, 2);
     // let coinToss = [-1, 1];
     // let xForce = random(coinToss) * random(0, 0.2);
@@ -110,6 +110,8 @@ class spark {
       x: 1.2 * random(_vX - 2, _vX + 2),
       y: 1.2 * random(_vY - 2, _vY + 2)
     });
+
+    this.type = _type;
   }
 
   update() {
@@ -138,7 +140,11 @@ class spark {
     let y = this.body.position.y;
     // fill(255);
     // noStroke();
-    stroke(255, 200, 0);
+    if (this.type == 1) {
+      stroke(255, 200, 0);
+    } else {
+      stroke(100, 120, 255);
+    }
     strokeWeight(1);
     noFill();
     ellipse(x, y, this.rad * 2, this.rad * 2);
