@@ -20,27 +20,17 @@ class rocket {
     };
     this.countdown = 100;
 
+    explosion(_x, _y, powerValue * cos(angleValue + PI), powerValue * sin(angleValue + PI), 2);
+
     console.log(this.body);
   }
 
   update() {
     let x = this.body.position.x;
     let y = this.body.position.y;
+    let m = this.body.mass;
 
-    let g = 0.05;
-
-    let gForce = Vector.create(0, 0);
-
-    for (let i = 0; i < planets.length; i++) {
-      let eachDir = Vector.sub(planets[i].body.position, this.body.position);
-      let dSquared = Vector.magnitudeSquared(eachDir);
-      let eachMag = g * planets[i].body.mass * this.body.mass / dSquared;
-      let eachForce = Vector.mult(Vector.normalise(eachDir), eachMag);
-
-      gForce = Vector.add(gForce, eachForce);
-    }
-
-    Body.applyForce(this.body, this.body.position, gForce);
+    Body.applyForce(this.body, this.body.position, grav(x, y, m));
     this.countdown -= 1;
   }
 
@@ -58,13 +48,7 @@ class rocket {
     push();
     translate(x, y);
     rotate(angle);
-    beginShape();
-    vertex(10, 0);
-    vertex(-2.5, -5);
-    vertex(2.5, 0);
-    vertex(-2.5, 5);
-    vertex(10, 0);
-    endShape();
+    rocketDraw();
     pop();
     this.lastPos = {
       x: x,
@@ -117,24 +101,15 @@ class spark {
   }
 
   update() {
+    let x = this.body.position.x;
+    let y = this.body.position.y;
+    let m = this.body.mass;
+
     let originalRad = this.rad;
     this.rad -= 0.08;
     Matter.Body.scale(this.body, this.rad / originalRad, this.rad / originalRad);
 
-    let g = 0.05;
-
-    let gForce = Vector.create(0, 0);
-
-    for (let i = 0; i < planets.length; i++) {
-      let eachDir = Vector.sub(planets[i].body.position, this.body.position);
-      let dSquared = Vector.magnitudeSquared(eachDir);
-      let eachMag = g * planets[i].body.mass * this.body.mass / dSquared;
-      let eachForce = Vector.mult(Vector.normalise(eachDir), eachMag);
-
-      gForce = Vector.add(gForce, eachForce);
-    }
-
-    Body.applyForce(this.body, this.body.position, gForce);
+    Body.applyForce(this.body, this.body.position, grav(x, y, m));
   }
 
   render() {
@@ -186,18 +161,17 @@ class spaceDust {
     this.x = _x;
     this.y = random(height);
 
-    this.v = random(1, 20);
+    this.v = random(1, 10);
   }
   update(_i) {
     this.x -= this.v;
-    if (this.x <= -width) {
-      removeItem(5, _i);
-      dusts.push(new spaceDust(width));
+    if (this.x <= 0) {
+      this.x = width;
     }
   }
   render() {
     stroke(255);
-    strokeWeight(this.v / 12);
+    strokeWeight(this.v / 2);
     point(this.x, this.y);
   }
 }

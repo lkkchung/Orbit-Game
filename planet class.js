@@ -39,6 +39,7 @@ class planet {
     let y = this.body.position.y;
 
     let diam = this.rad * 2;
+    noStroke();
     fill(this.color.r, this.color.g, this.color.b);
     ellipse(x, y, diam, diam);
   }
