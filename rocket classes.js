@@ -70,6 +70,8 @@ class rocket {
       x: x,
       y: y
     };
+
+    trailPoints.push(new trail(x, y, Vector.magnitude(this.body.velocity)));
   }
 
   kill(_i) {
@@ -160,5 +162,42 @@ class spark {
       removeItem(3, _i);
       World.remove(world, this.body);
     }
+  }
+}
+
+class trail {
+  constructor(_x, _y, _v) {
+    this.x = _x;
+    this.y = _y;
+    this.v = map(_v, 0, 15, 0, 255);
+  }
+
+  render() {
+    strokeWeight(2);
+    stroke(this.v, 255, 255 - this.v);
+    point
+      (this.x, this.y, 2, 2);
+
+  }
+}
+
+class spaceDust {
+  constructor(_x) {
+    this.x = _x;
+    this.y = random(height);
+
+    this.v = random(1, 20);
+  }
+  update(_i) {
+    this.x -= this.v;
+    if (this.x <= -width) {
+      removeItem(5, _i);
+      dusts.push(new spaceDust(width));
+    }
+  }
+  render() {
+    stroke(255);
+    strokeWeight(this.v / 12);
+    point(this.x, this.y);
   }
 }

@@ -1,18 +1,15 @@
 function startMenu() {
-  // textAlign(CENTER);
-  // textSize(50);
-  // fill(0);
-  // text("Rocket Slingshot!", width / 2, height / 2);
+  for (let i = 0; i < dusts.length; i++) {
+    dusts[i].update(i);
+    dusts[i].render();
+  }
+
+
   push();
   translate(width / 2, height / 3);
-  scale(0.4, 0.4);
   translate(-title.width / 2, -title.height / 2);
-  let titlePos = {
-    x: 0,
-    y: 8 * sin(frameCount / 5)
-  };
-  image(title, titlePos.x, titlePos.y);
-
+  tint(255, 255 - fadeIn)
+  image(title, 0, 8 * sin(frameCount / 5));
   // sprayTitle.push(new titleTrail(titlePos.x, titlePos.y));
   // for (let i = 0; i < sprayTitle.length; i++) {
   //   sprayTitle[i].update();
@@ -22,11 +19,29 @@ function startMenu() {
   //     sprayTitle.splice(i, 1);
   //   }
   // }
-
   pop();
 
-  if (mouseIsPressed) {
+  fadeIn -= 4;
+
+  push();
+  translate(width / 2, 2 * height / 3);
+  translate(0, 100 * sin(frameCount / 25) + 50 * sin(frameCount / 18));
+  scale(5, 5);
+  rotate(PI / 20 * cos(frameCount / 25) + PI / 20 * cos(frameCount / 18));
+  noStroke();
+  beginShape();
+  vertex(10, 0);
+  vertex(-2.5, -5);
+  vertex(2.5, 0);
+  vertex(-2.5, 5);
+  vertex(10, 0);
+  endShape();
+  pop();
+
+
+  if (keyIsPressed && keyCode === 32) {
     levelIndex = 1;
+    fadeIn = 255;
   }
 }
 //
@@ -60,17 +75,33 @@ function level1() {
     push();
     stroke(255);
     noFill();
-    translate(width / 2, height / 2);
+    translate(width / 2, height / 3);
     strokeWeight(1);
     scale(1);
     textSize(48);
     text("LEVEL 1", 0, 0);
+    noStroke();
+    fill(240);
+    textSize(28);
+    text("Try and achieve orbit around this planet.", 0, 80);
     pop();
 
+
     levelFlow.titleCountdown -= 1.5;
+
     if (levelFlow.titleCountdown <= 0) {
-      levelFlow.stage = 1;
+      push();
+      translate(width / 2 - ready.width / 2, height / 2);
+      tint(255, 255 - fadeIn);
+      image(ready, 0, 8 * sin(frameCount / 5));
+      pop();
+      fadeIn -= 4;
+      if (keyIsPressed && keyCode === 32) {
+        levelFlow.stage = 1;
+        fadeIn = 255;
+      }
     }
+
 
   } else if (levelFlow.stage == 1) {
     for (let i = 0; i < 1; i++) {

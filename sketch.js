@@ -21,16 +21,19 @@ let planets = [];
 let points = [];
 let rockets = [];
 let deadRockets = [];
+let trailPoints = [];
+let dusts = [];
 
 //text objects
 let title;
 let sprayTitle = [];
+let fadeIn = 255;
 
 //flow
 let levelIndex = 0;
 let levelStart = true;
 let messageIndex = 0;
-let levelPhase = 0;
+// let levelPhase = 0;
 let levelFlow = {
   title: true,
   titleCountdown: 3 * 60,
@@ -41,14 +44,19 @@ let levelFlow = {
 let angleValue = 0;
 let powerValue = 2;
 
+let browserSize = {
+  browserWidth: window.innerWidth || document.body.clientWidth,
+  browserHeight: window.innerHeight || document.body.clientHeight
+}
+
 
 function preload() {
   title = loadImage('assets/Title.png');
-
+  ready = loadImage('assets/ready.png');
 }
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(browserSize.browserWidth, browserSize.browserHeight);
 
   engine = Engine.create();
   world = engine.world;
@@ -57,21 +65,30 @@ function setup() {
 
   world.gravity.scale = 0; //1e-4;
   world.frictionAir = 0;
+
+  for (let i = 0; i <= 200; i++) {
+    dusts.push(new spaceDust(random(width)));
+  }
+
+
 }
 
 function draw() {
   background(0);
 
-  noStroke();
-  fill(255);
-  textSize(12);
-  textAlign(RIGHT);
-  text("ANGLE", 55, 24);
-  text("POWER", 55, 54);
+  if (levelFlow.stage == 1) {
 
-  textAlign(LEFT);
-  text(int(degrees(angleValue)), 60, 24);
-  text(int(powerValue * 10), 60, 54);
+    noStroke();
+    fill(255);
+    textSize(12);
+    textAlign(RIGHT);
+    text("ANGLE", 55, 24);
+    text("POWER", 55, 54);
+
+    textAlign(LEFT);
+    text(int(degrees(angleValue)), 60, 24);
+    text(int(powerValue * 10), 60, 54);
+  }
 
 
 
@@ -131,18 +148,6 @@ function drawLevels() {
   noFill();
   strokeWeight(1);
 
-  push();
-  translate(width / 2, 150);
-  rotate(angleValue);
-  beginShape();
-  vertex(10, 0);
-  vertex(-2.5, -5);
-  vertex(2.5, 0);
-  vertex(-2.5, 5);
-  vertex(10, 0);
-  endShape();
-  pop();
-
   function collision(event) {
     let pairs = event.pairs;
     for (let i = 0; i < pairs.length; i++) {
@@ -179,6 +184,13 @@ function drawLevels() {
     sparks[i].update();
     sparks[i].kill(i);
   }
+
+  for (let i = trailPoints.length - 1; i >= 0; i--) {
+    trailPoints[i].render();
+    if (i >= 200) {
+      removeItem(4, i);
+    }
+  }
 }
 
 function keyPressed() {
@@ -211,6 +223,12 @@ function removeItem(_item, _index) {
   }
   if (_item == 3) {
     sparks.splice(_index, 1);
+  }
+  if (_item == 4) {
+    trailPoints.splice(_index, 1);
+  }
+  if (_item == 5) {
+    dusts.splice(_index, 1);
   }
 }
 
