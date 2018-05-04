@@ -287,8 +287,13 @@ function removeItem(_item, _index) {
 }
 
 function resetAll() {
-  planets.splice(0, planets.length);
-  rockets.splice(0, rockets.length);
+  for (let i = 0; i < planets.length; i++) {
+    planets.kill(i);
+  }
+  for (let i = 0; i < rockets.length; i++) {
+    rockets.kill(i);
+  }
+
   dusts.splice(0, dusts.length);
   trailPoints.splice(0, trailPoints.length);
 
