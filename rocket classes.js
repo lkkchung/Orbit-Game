@@ -73,13 +73,13 @@ class rocket {
 
 class spark {
   constructor(_x, _y, _vX, _vY, _type) {
-    this.rad = random(0.5, 2);
+    this.rad = random(3, 6);
     // let coinToss = [-1, 1];
     // let xForce = random(coinToss) * random(0, 0.2);
     // let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
     let params = {
       friction: 0.9,
-      mass: this.rad * 0.01,
+      mass: this.rad,
       restitution: 0.9,
       collisionFilter: {
         category: 4,
@@ -87,14 +87,19 @@ class spark {
       }
     };
 
+    if (_type == 1) {
+      this.color = random(['#222222', '#777777', '#bbbbbb']);
+    } else {
+      this.color = random(['#ff003e', '#ff723e', '#ffaa3e', '#ff4f3e', '#ffe43e']);
+    }
     this.body = Bodies.circle(_x, _y, this.rad, params);
     World.add(engine.world, this.body);
     // console.log(this.body.position.y);
     // console.log(this.body);
 
     Body.setVelocity(this.body, {
-      x: 1.2 * random(_vX - 2, _vX + 2),
-      y: 1.2 * random(_vY - 2, _vY + 2)
+      x: 0.3 * random(_vX - 2, _vX + 2),
+      y: 0.3 * random(_vY - 2, _vY + 2)
     });
 
     this.type = _type;
@@ -116,14 +121,9 @@ class spark {
     let x = this.body.position.x;
     let y = this.body.position.y;
     // fill(255);
-    // noStroke();
-    if (this.type == 1) {
-      stroke(255, 200, 0);
-    } else {
-      stroke(100, 120, 255);
-    }
-    strokeWeight(1);
-    noFill();
+    noStroke();
+    fill(this.color);
+    // strokeWeight(1);
     ellipse(x, y, this.rad * 2, this.rad * 2);
 
     if (x > width * 2 || x < width * -1 ||
