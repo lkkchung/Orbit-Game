@@ -43,6 +43,18 @@ class planet {
     fill(this.color.r, this.color.g, this.color.b);
     ellipse(x, y, diam, diam);
   }
+
+  kill(_i) {
+    let x = this.body.position.x;
+    let y = this.body.position.y;
+    let velX = this.body.velocity.x;
+    let velY = this.body.velocity.y;
+
+    removeItem(1, _i);
+    World.remove(world, this.body);
+    // console.log("killing rocket");
+    explosion(x, y, velX, velY, 1);
+  }
 }
 
 class gravitationalField {
