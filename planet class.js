@@ -43,6 +43,12 @@ class planet {
     fill(this.color.r, this.color.g, this.color.b);
     ellipse(x, y, diam, diam);
   }
+
+  kill(_i) {
+    removeItem(1, _i);
+    World.remove(world, this.body);
+    // console.log("killing planet");
+  }
 }
 
 class gravitationalField {
