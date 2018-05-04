@@ -214,7 +214,7 @@ function drawLevels() {
 
   for (let i = rockets.length - 1; i >= 0; i--) {
     rockets[i].render();
-    rockets[i].update();
+    rockets[i].update(i);
     // rockets[i].kill(i);
   }
 
@@ -288,10 +288,10 @@ function removeItem(_item, _index) {
 
 function resetAll() {
   for (let i = 0; i < planets.length; i++) {
-    planets.kill(i);
+    planets[i].kill(i);
   }
   for (let i = 0; i < rockets.length; i++) {
-    rockets.kill(i);
+    rockets[i].kill(i);
   }
 
   dusts.splice(0, dusts.length);

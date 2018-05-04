@@ -25,37 +25,67 @@ class rocket {
     console.log(this.body);
   }
 
-  update() {
+  update(_i) {
     let x = this.body.position.x;
     let y = this.body.position.y;
     let m = this.body.mass;
 
     Body.applyForce(this.body, this.body.position, grav(x, y, m));
     this.countdown -= 1;
+
+    if (x > 3000 || x < -1560 || y > 3000 || y < -2100) {
+      this.kill(_i);
+    }
   }
 
   render() {
     let x = this.body.position.x;
     let y = this.body.position.y;
 
+    let offScreen = false;
+
     let alignment = Vector.create(x - this.lastPos.x, y - this.lastPos.y);
     let angle = Vector.angle(Vector.create(1, 0), alignment);
 
-    stroke(255);
-    noFill();
-    strokeWeight(1);
-
-    push();
-    translate(x, y);
-    rotate(angle);
-    rocketDraw();
-    pop();
     this.lastPos = {
       x: x,
       y: y
     };
 
     trailPoints.push(new trail(x, y, Vector.magnitude(this.body.velocity)));
+
+    //this gives a little indicator that the ship is off screen.
+    if (x >= width - 30) {
+      x = width - 30;
+      offScreen = true;
+    }
+    if (x <= 30) {
+      x = 30;
+      offScreen = true;
+    }
+    if (y >= height - 30) {
+      y = height - 30;
+      offScreen = true;
+    }
+    if (y <= 30) {
+      y = 30;
+      offScreen = true;
+    }
+
+    noFill();
+    push();
+    translate(x, y);
+    rotate(angle);
+    if (offScreen == true) {
+      strokeWeight(3);
+      stroke(255, 100 * sin(degrees(frameCount * 0.001)) + 200);
+      ellipse(0, 0, 40, 40);
+    }
+
+    stroke(255);
+    strokeWeight(1);
+    rocketDraw();
+    pop();
   }
 
   kill(_i) {
@@ -79,18 +109,21 @@ class spark {
     // let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
     let params = {
       friction: 0.9,
-      mass: this.rad,
+      mass: 1,
       restitution: 0.9,
-      collisionFilter: {
-        category: 4,
-        mask: 4
-      }
     };
 
-    if (_type == 1) {
+    this.type = _type;
+
+    if (this.type == 1) {
       this.color = random(['#222222', '#777777', '#bbbbbb']);
+      params.angularVelocity = random(100);
     } else {
       this.color = random(['#ff003e', '#ff723e', '#ffaa3e', '#ff4f3e', '#ffe43e']);
+      params.collisionFilter = {
+        category: 4,
+        mask: 4
+      };
     }
     this.body = Bodies.circle(_x, _y, this.rad, params);
     World.add(engine.world, this.body);
@@ -98,11 +131,9 @@ class spark {
     // console.log(this.body);
 
     Body.setVelocity(this.body, {
-      x: 0.3 * random(_vX - 2, _vX + 2),
-      y: 0.3 * random(_vY - 2, _vY + 2)
+      x: 1.2 * random(_vX - 2, _vX + 2),
+      y: 1.2 * random(_vY - 2, _vY + 2)
     });
-
-    this.type = _type;
   }
 
   update() {
@@ -114,7 +145,7 @@ class spark {
     this.rad -= 0.08;
     Matter.Body.scale(this.body, this.rad / originalRad, this.rad / originalRad);
 
-    Body.applyForce(this.body, this.body.position, grav(x, y, m));
+    // Body.applyForce(this.body, this.body.position, grav(x, y, m));
   }
 
   render() {
@@ -123,8 +154,19 @@ class spark {
     // fill(255);
     noStroke();
     fill(this.color);
-    // strokeWeight(1);
-    ellipse(x, y, this.rad * 2, this.rad * 2);
+
+    push();
+    translate(x, y);
+
+    if (this.type == 1) {
+      rotate(this.body.angle);
+      rectMode(CENTER);
+      rect(0, 0, this.rad * 2, this.rad);
+    } else {
+      ellipse(0, 0, this.rad * 2, this.rad * 2);
+    }
+
+    pop();
 
     if (x > width * 2 || x < width * -1 ||
       y > height * 2 || x < height * -1) {
