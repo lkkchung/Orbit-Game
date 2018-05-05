@@ -1,3 +1,6 @@
+let serial; // variable to hold an instance of the serialport library
+let portName = '/dev/cu.usbmodem1441';
+let inData; // for incoming serial data
 const Engine = Matter.Engine;
 const Bodies = Matter.Bodies;
 const World = Matter.World;
@@ -68,6 +71,40 @@ function preload() {
   lost = loadImage('assets/lost.png');
 }
 
+function printList(portList) {
+  // portList is an array of serial port names
+  for (var i = 0; i < portList.length; i++) {
+    // Display the list the console:
+    console.log(i + " " + portList[i]);
+  }
+}
+
+function serverConnected() {
+  console.log('connected to server.');
+}
+
+function portOpen() {
+  console.log('the serial port opened.')
+}
+
+function serialEvent() {
+  // read a string from the serial port:
+  var inString = serial.readLine();
+  // check to see that there's actually a string there:
+  if (inString.length > 0 ) {
+  // convert it to a number:
+  inData = Number(inString);
+  }
+}
+
+function serialError(err) {
+  console.log('Something went wrong with the serial port. ' + err);
+}
+
+function portClose() {
+  console.log('The serial port closed.');
+}
+
 function setup() {
   createCanvas(browserSize.browserWidth, browserSize.browserHeight);
 
@@ -83,6 +120,16 @@ function setup() {
     dusts.push(new spaceDust(random(width)));
   }
 
+  serial = new p5.SerialPort(); // make a new instance of the serialport library
+  serial.on('list', printList); // set a callback function for the serialport list event
+  serial.on('connected', serverConnected); // callback for connecting to the server
+  serial.on('open', portOpen); // callback for the port opening
+  serial.on('data', serialEvent); // callback for when new data arrives
+  serial.on('error', serialError); // callback for errors
+  serial.on('close', portClose); // callback for the port closing
+
+  serial.list(); // list the serial ports
+  serial.open(portName); // open a serial port
 
 }
 
@@ -140,18 +187,34 @@ function draw() {
     }
   }
 
-  if (keyIsDown(UP_ARROW)) {
+  if (inData>=101)
+  {
     angleValue -= PI / 360;
-    if (angleValue <= -PI / 2) {
-      angleValue = -PI / 2;
-    }
-  } else if (keyIsDown(DOWN_ARROW)) {
-    angleValue += PI / 360;
-    if (angleValue >= PI / 2) {
-      angleValue = PI / 2;
-    }
+       if (angleValue <= -PI / 2) {
+         angleValue = -PI / 2;
   }
-}
+    } else if (inData<=201) {
+    angleValue += PI / 360;
+       if (angleValue >= PI / 2) {
+         angleValue = PI / 2;
+       }
+     }
+   }
+
+
+  // if (keyIsDown(UP_ARROW)) {
+  //   angleValue -= PI / 360;
+  //   if (angleValue <= -PI / 2) {
+  //     angleValue = -PI / 2;
+  //   }
+  // } else if (keyIsDown(DOWN_ARROW)) {
+  //   angleValue += PI / 360;
+  //   if (angleValue >= PI / 2) {
+  //     angleValue = PI / 2;
+  //   }
+  // }
+
+
 
 function drawLevels() {
   Engine.update(engine, 60);
