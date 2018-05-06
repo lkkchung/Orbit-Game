@@ -112,7 +112,7 @@ class rocket {
 
 class spark {
   constructor(_x, _y, _vX, _vY, _type) {
-    this.rad = random(3, 6);
+    this.rad = random(3, 10);
     // let coinToss = [-1, 1];
     // let xForce = random(coinToss) * random(0, 0.2);
     // let yForce = random(coinToss) * random(0, sqrt(0.04 - xForce * xForce));
@@ -153,7 +153,7 @@ class spark {
     let m = this.body.mass;
 
     let originalRad = this.rad;
-    this.rad -= 0.08;
+    this.rad *= 0.95;
     Matter.Body.scale(this.body, this.rad / originalRad, this.rad / originalRad);
 
     // Body.applyForce(this.body, this.body.position, grav(x, y, m));
@@ -186,7 +186,7 @@ class spark {
   }
 
   kill(_i) {
-    if (this.rad <= 0) {
+    if (this.rad <= 0.05) {
       removeItem(3, _i);
       World.remove(world, this.body);
     }

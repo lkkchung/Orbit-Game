@@ -91,7 +91,6 @@ function setup() {
     dusts.push(new spaceDust(random(width)));
   }
 
-
 }
 
 function draw() {
