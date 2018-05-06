@@ -25,6 +25,10 @@ class planet {
           //   };
           // }
         ]
+      },
+      collisionFilter: {
+        category: 0x0001,
+        mask: 0x0002 | 0x0004
       }
     };
 
@@ -32,6 +36,8 @@ class planet {
     World.add(engine.world, this.body);
 
     console.log(this.body);
+
+    introSound.play();
   }
 
   render() {

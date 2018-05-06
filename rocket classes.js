@@ -4,7 +4,11 @@ class rocket {
       frictionAir: 0,
       mass: 1e-4,
       restitution: 0.8,
-      label: 'rocket'
+      label: 'rocket',
+      collisionFilter: {
+        category: 0x0002,
+        mask: 0x0001 | 0x0002
+      }
     }
     this.body = Bodies.circle(_x, _y, 10, params);
     World.add(engine.world, this.body);
@@ -101,6 +105,7 @@ class rocket {
     removeItem(2, _i);
     World.remove(world, this.body);
     // console.log("killing rocket");
+    explosion(x, y, velX, velY, 0);
     explosion(x, y, velX, velY, 1);
   }
 }
@@ -115,19 +120,19 @@ class spark {
       friction: 0.9,
       mass: 1,
       restitution: 0.9,
+      collisionFilter: {
+        category: 0x0004,
+        mask: 0x0001 | 0x0002
+      }
     };
 
     this.type = _type;
 
     if (this.type == 1) {
       this.color = random(['#222222', '#777777', '#bbbbbb']);
-      params.angularVelocity = random(100);
+
     } else {
       this.color = random(['#ff003e', '#ff723e', '#ffaa3e', '#ff4f3e', '#ffe43e']);
-      params.collisionFilter = {
-        category: 4,
-        mask: 4
-      };
     }
     this.body = Bodies.circle(_x, _y, this.rad, params);
     World.add(engine.world, this.body);
@@ -138,6 +143,8 @@ class spark {
       x: 1.2 * random(_vX - 2, _vX + 2),
       y: 1.2 * random(_vY - 2, _vY + 2)
     });
+
+    Body.setAngularVelocity(this.body, random(1));
   }
 
   update() {
@@ -191,15 +198,18 @@ class trail {
     this.x = _x;
     this.y = _y;
     this.v = map(_v, 0, 15, 0, 64);
+    this.t = 0;
   }
 
   render() {
     strokeWeight(2);
     colorMode(HSL, 255);
     let hue = 40 + this.v;
-    stroke(this.v + 161, 255, 120);
+    stroke(this.v + 161, 255, 120, 255 - 3 * (this.t % 50));
     point(this.x, this.y, 2, 2);
     colorMode(RGB, 255);
+
+    this.t += 1;
 
   }
 }

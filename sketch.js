@@ -73,6 +73,7 @@ function preload() {
   soundFormats('wav');
   explosion[0] = loadSound('assets/Explosion_01.wav');
   explosion[1] = loadSound('assets/Explosion_02.wav');
+  introSound = loadSound('assets/Intro.wav');
 }
 
 function setup() {
@@ -129,7 +130,9 @@ function draw() {
         level4();
       }
       if (levelIndex == 5) {
-        level5();
+        // // level5();
+        levelIndex = 0;
+        setup();
       }
     }
     drawLevels();
