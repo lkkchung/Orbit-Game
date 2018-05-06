@@ -20,6 +20,8 @@ class rocket {
     };
     this.countdown = 100;
 
+    explosion[1].play();
+
     explosion(_x, _y, powerValue * cos(angleValue + PI), powerValue * sin(angleValue + PI), 2);
 
     console.log(this.body);
@@ -93,6 +95,8 @@ class rocket {
     let y = this.body.position.y;
     let velX = this.body.velocity.x;
     let velY = this.body.velocity.y;
+
+    explosion[0].play();
 
     removeItem(2, _i);
     World.remove(world, this.body);
@@ -186,14 +190,16 @@ class trail {
   constructor(_x, _y, _v) {
     this.x = _x;
     this.y = _y;
-    this.v = map(_v, 0, 15, 0, 255);
+    this.v = map(_v, 0, 15, 0, 64);
   }
 
   render() {
     strokeWeight(2);
-    stroke(this.v, 255, 255 - this.v);
-    point
-      (this.x, this.y, 2, 2);
+    colorMode(HSL, 255);
+    let hue = 40 + this.v;
+    stroke(this.v + 161, 255, 120);
+    point(this.x, this.y, 2, 2);
+    colorMode(RGB, 255);
 
   }
 }

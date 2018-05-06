@@ -53,6 +53,9 @@ let levelFlow = {
 let angleValue = 0;
 let powerValue = 2;
 
+//sounds
+let explosions = [];
+
 let browserSize = {
   browserWidth: window.innerWidth || document.body.clientWidth,
   browserHeight: window.innerHeight || document.body.clientHeight
@@ -66,6 +69,10 @@ function preload() {
   gameOver = loadImage('assets/game_over.png');
   crash = loadImage('assets/crash.png');
   lost = loadImage('assets/lost.png');
+
+  soundFormats('wav');
+  explosion[0] = loadSound('assets/Explosion_01.wav');
+  explosion[1] = loadSound('assets/Explosion_02.wav');
 }
 
 function setup() {
