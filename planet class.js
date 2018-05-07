@@ -25,6 +25,10 @@ class planet {
           //   };
           // }
         ]
+      },
+      collisionFilter: {
+        category: 0x0001,
+        mask: 0x0002 | 0x0004
       }
     };
 
@@ -32,6 +36,8 @@ class planet {
     World.add(engine.world, this.body);
 
     console.log(this.body);
+
+    introSound.play();
   }
 
   render() {
@@ -45,15 +51,9 @@ class planet {
   }
 
   kill(_i) {
-    let x = this.body.position.x;
-    let y = this.body.position.y;
-    let velX = this.body.velocity.x;
-    let velY = this.body.velocity.y;
-
     removeItem(1, _i);
     World.remove(world, this.body);
-    // console.log("killing rocket");
-    explosion(x, y, velX, velY, 1);
+    // console.log("killing planet");
   }
 }
 

@@ -79,10 +79,7 @@ function level1() {
       }
     }
   } else if (levelFlow.stage == 1) {
-    for (let i = 0; i < 1; i++) {
-      planets[i] = new planet(width / 2, height / 2, 50);
-      // planets[i] = new planet(random(width), random(height), random(20, 80));
-    }
+    planets[0] = new planet(width / 2, height / 2, 50);
 
     for (let i = 0; i < 200; i++) {
       dusts[i] = new spaceDust(random(width));

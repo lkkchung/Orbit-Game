@@ -56,6 +56,9 @@ let levelFlow = {
 let angleValue = 0;
 let powerValue = 2;
 
+//sounds
+let explosions = [];
+
 let browserSize = {
   browserWidth: window.innerWidth || document.body.clientWidth,
   browserHeight: window.innerHeight || document.body.clientHeight
@@ -69,6 +72,11 @@ function preload() {
   gameOver = loadImage('assets/game_over.png');
   crash = loadImage('assets/crash.png');
   lost = loadImage('assets/lost.png');
+
+  soundFormats('wav');
+  explosion[0] = loadSound('assets/Explosion_01.wav');
+  explosion[1] = loadSound('assets/Explosion_02.wav');
+  introSound = loadSound('assets/Intro.wav');
 }
 
 function printList(portList) {
@@ -118,8 +126,7 @@ function setup() {
 
   for (let i = 0; i <= 200; i++) {
     dusts.push(new spaceDust(random(width)));
-  }
-
+    
   serial = new p5.SerialPort(); // make a new instance of the serialport library
   serial.on('list', printList); // set a callback function for the serialport list event
   serial.on('connected', serverConnected); // callback for connecting to the server
@@ -169,7 +176,9 @@ function draw() {
         level4();
       }
       if (levelIndex == 5) {
-        level5();
+        // // level5();
+        levelIndex = 0;
+        setup();
       }
     }
     drawLevels();
@@ -277,7 +286,7 @@ function drawLevels() {
 
   for (let i = rockets.length - 1; i >= 0; i--) {
     rockets[i].render();
-    rockets[i].update();
+    rockets[i].update(i);
     // rockets[i].kill(i);
   }
 
@@ -351,10 +360,10 @@ function removeItem(_item, _index) {
 
 function resetAll() {
   for (let i = 0; i < planets.length; i++) {
-    planets.kill(i);
+    planets[i].kill(i);
   }
   for (let i = 0; i < rockets.length; i++) {
-    rockets.kill(i);
+    rockets[i].kill(i);
   }
 
   dusts.splice(0, dusts.length);
