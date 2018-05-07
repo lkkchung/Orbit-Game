@@ -1,10 +1,10 @@
 void setup() {
-  Serial.begin(9600); //Transmit at 9600 Baud Rate
+  Serial.begin(9600); 
 }
 
 void loop() {
-  int pot = analogRead(A0); //variable to store potValue
-  int IRValue = analogRead(A1); //variable to store Flex Value
+  int pot = analogRead(A0); 
+  int IRValue = analogRead(A1); 
 
  if (pot<=200)
  {
