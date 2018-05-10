@@ -140,8 +140,8 @@ class spark {
     // console.log(this.body);
 
     Body.setVelocity(this.body, {
-      x: 1.2 * random(_vX - 2, _vX + 2),
-      y: 1.2 * random(_vY - 2, _vY + 2)
+      x: 0.5 * random(_vX - 2, _vX + 2),
+      y: 0.5 * random(_vY - 2, _vY + 2)
     });
 
     Body.setAngularVelocity(this.body, random(1));
