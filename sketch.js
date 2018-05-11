@@ -1,6 +1,3 @@
-let serial; // variable to hold an instance of the serialport library
-let portName = '/dev/cu.usbmodem1441';
-let inData; // for incoming serial data
 const Engine = Matter.Engine;
 const Bodies = Matter.Bodies;
 const World = Matter.World;
@@ -28,7 +25,8 @@ let trailPoints = [];
 let dusts = [];
 let startPos = {
   x: 0,
-  y: 0
+  y: 0,
+  t: 0
 };
 
 //text objects
@@ -55,10 +53,21 @@ let levelFlow = {
 //inputs
 let angleValue = 0;
 let powerValue = 2;
+let launching = false;
+let readyToLaunch = false;
+let distSensor = [0, 0];
+
 
 //sounds
 let explosions = [];
+let introSound;
 
+//serial variables
+let serial; // variable to hold an instance of the serialport library
+let portName = '/dev/cu.usbmodem1441';
+let inData; // for incoming serial data
+
+//interface variabls
 let browserSize = {
   browserWidth: window.innerWidth || document.body.clientWidth,
   browserHeight: window.innerHeight || document.body.clientHeight
@@ -79,40 +88,6 @@ function preload() {
   introSound = loadSound('assets/Intro.wav');
 }
 
-function printList(portList) {
-  // portList is an array of serial port names
-  for (var i = 0; i < portList.length; i++) {
-    // Display the list the console:
-    console.log(i + " " + portList[i]);
-  }
-}
-
-function serverConnected() {
-  console.log('connected to server.');
-}
-
-function portOpen() {
-  console.log('the serial port opened.')
-}
-
-function serialEvent() {
-  // read a string from the serial port:
-  var inString = serial.readLine();
-  // check to see that there's actually a string there:
-  if (inString.length > 0 ) {
-  // convert it to a number:
-  inData = Number(inString);
-  }
-}
-
-function serialError(err) {
-  console.log('Something went wrong with the serial port. ' + err);
-}
-
-function portClose() {
-  console.log('The serial port closed.');
-}
-
 function setup() {
   createCanvas(browserSize.browserWidth, browserSize.browserHeight);
 
@@ -126,7 +101,8 @@ function setup() {
 
   for (let i = 0; i <= 200; i++) {
     dusts.push(new spaceDust(random(width)));
-    
+  }
+
   serial = new p5.SerialPort(); // make a new instance of the serialport library
   serial.on('list', printList); // set a callback function for the serialport list event
   serial.on('connected', serverConnected); // callback for connecting to the server
@@ -151,13 +127,13 @@ function draw() {
     textAlign(RIGHT);
     text("ANGLE", 55, 24);
     text("POWER", 55, 54);
+    text("READY TO LAUNCH", 55, 84);
 
     textAlign(LEFT);
     text(int(degrees(angleValue)), 60, 24);
-    text(int(powerValue * 10), 60, 54);
+    text(int(powerValue), 60, 54);
+    text(readyToLaunch, 60, 84);
   }
-
-
 
   if (levelIndex == 0) {
     startMenu();
@@ -184,32 +160,17 @@ function draw() {
     drawLevels();
   }
 
-  if (keyIsDown(LEFT_ARROW)) {
-    powerValue -= 0.05;
-    if (powerValue <= 2) {
-      powerValue = 2;
-    }
-  } else if (keyIsDown(RIGHT_ARROW)) {
-    powerValue += 0.05;
-    if (powerValue >= 12) {
-      powerValue = 12;
-    }
-  }
-
-  if (inData>=101)
-  {
-    angleValue -= PI / 360;
-       if (angleValue <= -PI / 2) {
-         angleValue = -PI / 2;
-  }
-    } else if (inData<=201) {
-    angleValue += PI / 360;
-       if (angleValue >= PI / 2) {
-         angleValue = PI / 2;
-       }
-     }
-   }
-
+  // if (keyIsDown(LEFT_ARROW)) {
+  //   powerValue -= 0.05;
+  //   if (powerValue <= 2) {
+  //     powerValue = 2;
+  //   }
+  // } else if (keyIsDown(RIGHT_ARROW)) {
+  //   powerValue += 0.05;
+  //   if (powerValue >= 12) {
+  //     powerValue = 12;
+  //   }
+  // }
 
   // if (keyIsDown(UP_ARROW)) {
   //   angleValue -= PI / 360;
@@ -222,8 +183,7 @@ function draw() {
   //     angleValue = PI / 2;
   //   }
   // }
-
-
+}
 
 function drawLevels() {
   Engine.update(engine, 60);
@@ -274,12 +234,6 @@ function drawLevels() {
     }
   }
 
-  // for (let i = 0; i < points.length; i++) {
-  //   for (let j = 0; j < points[i].length; j++) {
-  //     points[i][j].render();
-  //   }
-  // }
-
   for (let i = planets.length - 1; i >= 0; i--) {
     planets[i].render();
   }
@@ -314,15 +268,62 @@ function drawLevels() {
   }
 }
 
-function keyPressed() {
-  if (keyCode == 32) {
-    if (levelFlow.stage == 1) {
-      for (let i = 0; i < 1; i++) {
-        rockets.push(new rocket(startPos.x, startPos.y,
-          powerValue * cos(angleValue), powerValue * sin(angleValue)));
-      }
+// function keyPressed() {
+//   if (keyCode == 32) {
+//     if (levelFlow.stage == 1) {
+//       rocketLaunch();
+//     }
+//   }
+// }
+
+function serialEvent() {
+  // read a string from the serial port:
+  var inString = serial.readLine();
+  // check to see that there's actually a string there:
+  if (inString.length > 0) {
+    console.log(inString);
+    let sensors = split(inString, ",");
+    if (sensors.length > 1) {
+      distSensor.push(sensors[0] / 10);
+      powerValue = sensors[0] / 10;
+      angleValue = radians(sensors[1]);
+      distSensor.splice(0, 1);
     }
   }
+
+  rocketLaunch();
+  //
+  // if (inData >= 101) {
+  //   angleValue -= PI / 360;
+  //   if (angleValue <= -PI / 2) {
+  //     angleValue = -PI / 2;
+  //   }
+  // } else if (inData <= 201) {
+  //   angleValue += PI / 360;
+  //   if (angleValue >= PI / 2) {
+  //     angleValue = PI / 2;
+  //   }
+  // }
+}
+
+function rocketLaunch() {
+  if (distSensor[distSensor.length - 1] >= 2) {
+    readyToLaunch = true;
+  }
+
+  if (readyToLaunch === true) {
+    if (distSensor[distSensor.length - 1] <= 1) {
+      powerValue = max(distSensor);
+      rockets.push(new rocket(startPos.x, startPos.y,
+        powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
+      readyToLaunch = false;
+    }
+  }
+
+  // if (launching === true && readyToLaunch === true) {
+  //   rockets.push(new rocket(startPos.x, startPos.y,
+  //     powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
+  // }
 }
 
 function rocketDraw() {
@@ -394,6 +395,30 @@ function grav(_x, _y, _m) {
 
     gForce = Vector.add(gForce, eachForce);
   }
-
   return gForce;
+}
+
+function printList(portList) {
+  // portList is an array of serial port names
+  for (var i = 0; i < portList.length; i++) {
+    // Display the list the console:
+    console.log(i + " " + portList[i]);
+  }
+}
+
+function serverConnected() {
+  console.log('connected to server.');
+}
+
+function portOpen() {
+  console.log('the serial port opened.')
+}
+
+
+function serialError(err) {
+  console.log('Something went wrong with the serial port. ' + err);
+}
+
+function portClose() {
+  console.log('The serial port closed.');
 }

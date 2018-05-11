@@ -3,7 +3,7 @@
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // wait until serial port opens for native USB devices
   while (! Serial) {
@@ -34,7 +34,7 @@ void loop() {
     dist = 0;
   }
 
-  int distValue = map(dist, 45, 120, 0, 12);
+  int distValue = map(dist, 45, 120, 0, 120);
 
   Serial.print(distValue);
 
@@ -42,7 +42,7 @@ void loop() {
 
   int pot = analogRead(A0);
 
-  int potValue = map(pot, 691, 374, -45, 45);
+  int potValue = map(pot, 691, 374, 45, -45);
   Serial.println(potValue);
 
   delay(100);
