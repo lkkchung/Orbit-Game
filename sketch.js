@@ -56,6 +56,7 @@ let powerValue = 2;
 let launching = false;
 let readyToLaunch = false;
 let distSensor = [0, 0];
+let dbMode = false;
 
 
 //sounds
@@ -127,12 +128,14 @@ function draw() {
     textAlign(RIGHT);
     text("ANGLE", 55, 24);
     text("POWER", 55, 54);
-    text("READY TO LAUNCH", 55, 84);
+    if (dbMode == true) {
+      text("DEBUG ON", 55, 84);
+    }
+
 
     textAlign(LEFT);
     text(int(degrees(angleValue)), 60, 24);
     text(int(powerValue), 60, 54);
-    text(readyToLaunch, 60, 84);
   }
 
   if (levelIndex == 0) {
@@ -160,29 +163,31 @@ function draw() {
     drawLevels();
   }
 
-  // if (keyIsDown(LEFT_ARROW)) {
-  //   powerValue -= 0.05;
-  //   if (powerValue <= 2) {
-  //     powerValue = 2;
-  //   }
-  // } else if (keyIsDown(RIGHT_ARROW)) {
-  //   powerValue += 0.05;
-  //   if (powerValue >= 12) {
-  //     powerValue = 12;
-  //   }
-  // }
+  if (dbMode == true) {
+    if (keyIsDown(LEFT_ARROW)) {
+      powerValue -= 0.05;
+      if (powerValue <= 2) {
+        powerValue = 2;
+      }
+    } else if (keyIsDown(RIGHT_ARROW)) {
+      powerValue += 0.05;
+      if (powerValue >= 12) {
+        powerValue = 12;
+      }
+    }
 
-  // if (keyIsDown(UP_ARROW)) {
-  //   angleValue -= PI / 360;
-  //   if (angleValue <= -PI / 2) {
-  //     angleValue = -PI / 2;
-  //   }
-  // } else if (keyIsDown(DOWN_ARROW)) {
-  //   angleValue += PI / 360;
-  //   if (angleValue >= PI / 2) {
-  //     angleValue = PI / 2;
-  //   }
-  // }
+    if (keyIsDown(UP_ARROW)) {
+      angleValue -= PI / 360;
+      if (angleValue <= -PI / 2) {
+        angleValue = -PI / 2;
+      }
+    } else if (keyIsDown(DOWN_ARROW)) {
+      angleValue += PI / 360;
+      if (angleValue >= PI / 2) {
+        angleValue = PI / 2;
+      }
+    }
+  }
 }
 
 function drawLevels() {
@@ -268,13 +273,18 @@ function drawLevels() {
   }
 }
 
-// function keyPressed() {
-//   if (keyCode == 32) {
-//     if (levelFlow.stage == 1) {
-//       rocketLaunch();
-//     }
-//   }
-// }
+function keyPressed() {
+  if (keyCode == 68) {
+    dbMode = !dbMode;
+  } else if (keyCode == 32) {
+    if (dbMode == true) {
+      if (levelFlow.stage == 1) {
+        rockets.push(new rocket(startPos.x, startPos.y,
+          powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
+      }
+    }
+  }
+}
 
 function serialEvent() {
   // read a string from the serial port:
@@ -291,19 +301,12 @@ function serialEvent() {
     }
   }
 
-  rocketLaunch();
-  //
-  // if (inData >= 101) {
-  //   angleValue -= PI / 360;
-  //   if (angleValue <= -PI / 2) {
-  //     angleValue = -PI / 2;
-  //   }
-  // } else if (inData <= 201) {
-  //   angleValue += PI / 360;
-  //   if (angleValue >= PI / 2) {
-  //     angleValue = PI / 2;
-  //   }
-  // }
+  if (levelIndex < 1) {
+    levelIndex = 1;
+    resetAll();
+  } else {
+    rocketLaunch();
+  }
 }
 
 function rocketLaunch() {
