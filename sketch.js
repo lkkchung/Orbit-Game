@@ -53,9 +53,10 @@ let levelFlow = {
 //inputs
 let angleValue = 0;
 let powerValue = 2;
-let launching = false;
+let launchDelay = 0;
+let justLaunched = false;
 let readyToLaunch = false;
-let distSensor = [0, 0];
+let distSensor = [0, 0, 0, 0, 0];
 let dbMode = false;
 
 
@@ -188,6 +189,12 @@ function draw() {
       }
     }
   }
+
+  if (launchDelay > 0) {
+    launchDelay -= 1;
+  } else {
+    justLaunched = false;
+  }
 }
 
 function drawLevels() {
@@ -314,19 +321,17 @@ function rocketLaunch() {
     readyToLaunch = true;
   }
 
-  if (readyToLaunch === true) {
+  if (readyToLaunch === true && justLaunched === false) {
     if (distSensor[distSensor.length - 1] <= 1) {
       powerValue = max(distSensor);
       rockets.push(new rocket(startPos.x, startPos.y,
         powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
       readyToLaunch = false;
+      justLaunched = true;
+      launchDelay = 100;
     }
   }
 
-  // if (launching === true && readyToLaunch === true) {
-  //   rockets.push(new rocket(startPos.x, startPos.y,
-  //     powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
-  // }
 }
 
 function rocketDraw() {
