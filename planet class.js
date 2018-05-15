@@ -4,12 +4,49 @@ class planet {
     let y = _y; //random(100, height - 100); //height / 2;
     this.rad = _r; //random(50, 150);
     this.counter = [0, 8, 16];
-
     this.color = {
       r: 255,
       g: 255,
       b: 255
     };
+
+    let mainColor = random(["r", "g", "b"]);
+    if (mainColor === "r") {
+      this.color.r = 255;
+      let colorFlip = random([0, 1]);
+      if (colorFlip === 0) {
+        this.color.g = random(125, 255);
+        this.color.b = random(0, 120);
+      } else {
+        this.color.b = random(125, 255);
+        this.color.g = random(0, 120);
+      }
+    }
+    if (mainColor === "g") {
+      this.color.g = 255;
+      let colorFlip = random([0, 1]);
+      if (colorFlip === 0) {
+        this.color.r = random(125, 255);
+        this.color.b = random(0, 120);
+      } else {
+        this.color.b = random(125, 255);
+        this.color.r = random(0, 120);
+      }
+    }
+    if (mainColor === "b") {
+      this.color.b = 255;
+      let colorFlip = random([0, 1]);
+      if (colorFlip === 0) {
+        this.color.r = random(125, 255);
+        this.color.g = random(0, 120);
+      } else {
+        this.color.g = random(125, 255);
+        this.color.r = random(0, 120);
+      }
+    }
+
+
+
 
     let params = {
       isStatic: true,

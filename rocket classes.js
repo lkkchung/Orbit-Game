@@ -61,20 +61,20 @@ class rocket {
     trailPoints.push(new trail(x, y, Vector.magnitude(this.body.velocity)));
 
     //this gives a little indicator that the ship is off screen.
-    if (x >= width - 30) {
-      x = width - 30;
+    if (x >= width - 80) {
+      x = width - 80;
       offScreen = true;
     }
-    if (x <= 30) {
-      x = 30;
+    if (x <= 80) {
+      x = 80;
       offScreen = true;
     }
-    if (y >= height - 30) {
-      y = height - 30;
+    if (y >= height - 80) {
+      y = height - 80;
       offScreen = true;
     }
-    if (y <= 30) {
-      y = 30;
+    if (y <= 80) {
+      y = 80;
       offScreen = true;
     }
 

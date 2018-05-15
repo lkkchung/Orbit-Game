@@ -47,8 +47,11 @@ let levelFlow = {
   title: true,
   titleCountdown: 3 * 60,
   successCountdown: 3 * 60,
-  stage: 0, //0 for intro, 1 for active portion, 2 for end
+  stage: 1, //0 for intro, 1 for active portion, 2 for end
 }
+let timer = 0;
+let levelCountdown = 100;
+let secs = 0;
 
 //inputs
 let angleValue = 0;
@@ -127,16 +130,20 @@ function draw() {
     fill(255);
     textSize(12);
     textAlign(RIGHT);
-    text("ANGLE", 55, 24);
-    text("POWER", 55, 54);
+    text("ANGLE", 105, 54);
+    text("POWER", 105, 84);
+
     if (dbMode == true) {
-      text("DEBUG ON", 55, 84);
+      text("DEBUG", 105, 144);
     }
 
 
     textAlign(LEFT);
-    text(int(degrees(angleValue)), 60, 24);
-    text(int(powerValue), 60, 54);
+    text(int(degrees(angleValue)), 110, 54);
+    text(int(powerValue), 110, 84);
+
+    textAlign(RIGHT);
+    text("NEXT LEVEL IN " + levelCountdown + " SECONDS", width - 105, 54);
   }
 
   if (levelIndex == 0) {
@@ -156,7 +163,9 @@ function draw() {
         level4();
       }
       if (levelIndex == 5) {
-        // // level5();
+        level5();
+      }
+      if (levelIndex == 6) {
         levelIndex = 0;
         setup();
       }
@@ -195,6 +204,19 @@ function draw() {
   } else {
     justLaunched = false;
   }
+
+
+  if (millis() - timer >= 30000) {
+    timer = millis();
+    nextLevel();
+    levelCountdown = 30;
+  }
+
+  if (millis() - secs >= 1000) {
+    secs = millis();
+    levelCountdown -= 1;
+
+  }
 }
 
 function drawLevels() {
@@ -207,7 +229,7 @@ function drawLevels() {
     strokeWeight(1);
     push();
     translate(startPos.x, startPos.y);
-    rotate(angleValue);
+    rotate(angleValue + startPos.t);
     rocketDraw();
 
     stroke(255, 0, 62, 100 * sin(degrees(frameCount * 0.001)) + 200);
@@ -246,6 +268,10 @@ function drawLevels() {
     }
   }
 
+  for (let i = dusts.length - 1; i >= 0; i--) {
+    dusts[i].render();
+  }
+
   for (let i = planets.length - 1; i >= 0; i--) {
     planets[i].render();
   }
@@ -269,15 +295,19 @@ function drawLevels() {
     }
   }
 
-  for (let i = dusts.length - 1; i >= 0; i--) {
-    dusts[i].render();
-  }
 
-  if (keyIsPressed && keyCode === RETURN) {
-    levelFlow.stage = 2;
-    levelMiddle = false;
-    resetAll();
-  }
+  // if (keyIsPressed && keyCode === RETURN) {
+  //   levelFlow.stage = 1;
+  //   levelMiddle = false;
+  //   resetAll();
+  // }
+}
+
+function nextLevel() {
+  levelIndex++;
+  console.log(levelIndex);
+  resetAll();
+  levelMiddle = false;
 }
 
 function keyPressed() {
@@ -290,6 +320,8 @@ function keyPressed() {
           powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
       }
     }
+  } else if (keyCode === RETURN) {
+    nextLevel();
   }
 }
 
@@ -308,12 +340,8 @@ function serialEvent() {
     }
   }
 
-  if (levelIndex < 1) {
-    levelIndex = 1;
-    resetAll();
-  } else {
-    rocketLaunch();
-  }
+  rocketLaunch();
+
 }
 
 function rocketLaunch() {
@@ -323,6 +351,10 @@ function rocketLaunch() {
 
   if (readyToLaunch === true && justLaunched === false) {
     if (distSensor[distSensor.length - 1] <= 1) {
+      if (levelIndex < 1) {
+        levelIndex = 1;
+        resetAll();
+      }
       powerValue = max(distSensor);
       rockets.push(new rocket(startPos.x, startPos.y,
         powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));

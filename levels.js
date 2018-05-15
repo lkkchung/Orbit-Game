@@ -9,18 +9,18 @@ function startMenu() {
 
   push();
   translate(width / 2, height / 3);
+  fill(255, 255 - fadeIn);
+  noStroke();
+  textSize(16);
+  textAlign(CENTER);
+  text("writen and built by", 0, 80);
+  textSize(32);
+  text("Lucas Chung & Shreiya Chowdhary", 0, 120);
+
   translate(-title.width / 2, -title.height / 2);
   tint(255, 255 - fadeIn)
   image(title, 0, 8 * sin(frameCount / 5));
-  // sprayTitle.push(new titleTrail(titlePos.x, titlePos.y));
-  // for (let i = 0; i < sprayTitle.length; i++) {
-  //   sprayTitle[i].update();
-  //   sprayTitle[i].render();
-  //
-  //   if (sprayTitle[i].scale <= 0.1) {
-  //     sprayTitle.splice(i, 1);
-  //   }
-  // }
+
   pop();
 
   fadeIn -= 4;
@@ -47,247 +47,69 @@ function startMenu() {
 }
 
 function level1() {
-  if (levelFlow.stage == 0) {
-    textAlign(CENTER);
-    push();
-    stroke(255);
-    noFill();
-    translate(width / 2, height / 3);
-    strokeWeight(1);
-    scale(1);
-    textSize(48);
-    text("LEVEL " + levelIndex, 0, 0);
-    noStroke();
-    fill(240);
-    textSize(28);
-    text("Try and achieve orbit around this planet.", 0, 80);
-    pop();
 
+  planets[0] = new planet(width / 2, height / 2, 50);
 
-    levelFlow.titleCountdown -= 1.5;
-
-    if (levelFlow.titleCountdown <= 0) {
-      push();
-      translate(width / 2 - ready.width / 2, height / 2);
-      tint(255, 255 - fadeIn);
-      image(ready, 0, 8 * sin(frameCount / 5));
-      pop();
-      fadeIn -= 4;
-      if (keyIsPressed && keyCode === 32) {
-        levelFlow.stage = 1;
-        resetAll();
-      }
-    }
-  } else if (levelFlow.stage == 1) {
-    planets[0] = new planet(width / 2, height / 2, 50);
-
-    for (let i = 0; i < 200; i++) {
-      dusts[i] = new spaceDust(random(width));
-    }
-    startPos.x = width / 2;
-    startPos.y = 150;
-    levelMiddle = true;
-
-  } else if (levelFlow.stage == 2) {
-    push();
-    translate(width / 2 - success.width / 2, height / 2);
-    tint(255, 255 - fadeIn);
-    image(success, 0, 8 * sin(frameCount / 5));
-    pop();
-    fadeIn -= 4;
-    levelFlow.successCountdown -= 1;
-
-    if (levelFlow.successCountdown <= 0) {
-      levelIndex += 1;
-      levelFlow.stage = 0;
-      resetAll();
-    }
+  for (let i = 0; i < 200; i++) {
+    dusts[i] = new spaceDust(random(width));
   }
+  startPos.x = 0.3 * width;
+  startPos.y = 0.3 * width;
+  startPos.t = radians(-20);
+
+  levelMiddle = true;
 }
 
 function level2() {
-  if (levelFlow.stage == 0) {
-    textAlign(CENTER);
-    push();
-    stroke(255);
-    noFill();
-    translate(width / 2, height / 3);
-    strokeWeight(1);
-    scale(1);
-    textSize(48);
-    text("LEVEL " + levelIndex, 0, 0);
-    noStroke();
-    fill(240);
-    textSize(28);
-    text("Try and achieve orbit around this planet.", 0, 80);
-    pop();
+  planets[0] = new planet(width / 2, height / 2, 100);
 
-
-    levelFlow.titleCountdown -= 1.5;
-
-    if (levelFlow.titleCountdown <= 0) {
-      push();
-      translate(width / 2 - ready.width / 2, height / 2);
-      tint(255, 255 - fadeIn);
-      image(ready, 0, 8 * sin(frameCount / 5));
-      pop();
-      fadeIn -= 4;
-      if (keyIsPressed && keyCode === 32) {
-        levelFlow.stage = 1;
-        resetAll();
-      }
-    }
-  } else if (levelFlow.stage == 1) {
-    for (let i = 0; i < 1; i++) {
-      planets[i] = new planet(width / 2, height / 2, 100);
-    }
-
-    for (let i = 0; i < 200; i++) {
-      dusts[i] = new spaceDust(random(width));
-    }
-    startPos.x = width / 6;
-    startPos.y = 150;
-    levelMiddle = true;
-
-  } else if (levelFlow.stage == 2) {
-    push();
-    translate(width / 2 - success.width / 2, height / 2);
-    tint(255, 255 - fadeIn);
-    image(success, 0, 8 * sin(frameCount / 5));
-    pop();
-    fadeIn -= 4;
-    levelFlow.successCountdown -= 1;
-
-    if (levelFlow.successCountdown <= 0) {
-      levelIndex += 1;
-      levelFlow.stage = 0;
-      resetAll();
-    }
+  for (let i = 0; i < 200; i++) {
+    dusts[i] = new spaceDust(random(width));
   }
+  startPos.x = width / 6;
+  startPos.y = 150;
+  startPos.t = radians(-20);
+  levelMiddle = true;
+
 }
 
 function level3() {
-  if (levelFlow.stage == 0) {
-    textAlign(CENTER);
-    push();
-    stroke(255);
-    noFill();
-    translate(width / 2, height / 3);
-    strokeWeight(1);
-    scale(1);
-    textSize(48);
-    text("LEVEL " + levelIndex, 0, 0);
-    noStroke();
-    fill(240);
-    textSize(28);
-    text("Try and achieve orbit around two planets!", 0, 80);
-    textSize(18);
-    text("Bonus: Try and make a figure 8!", 0, 120);
-    pop();
 
+  planets[0] = new planet(width * 0.3, height * 0.3, 100);
+  planets[1] = new planet(width * 0.7, height * 0.7, 100);
 
-    levelFlow.titleCountdown -= 1.5;
-
-    if (levelFlow.titleCountdown <= 0) {
-      push();
-      translate(width / 2 - ready.width / 2, height / 2);
-      tint(255, 255 - fadeIn);
-      image(ready, 0, 8 * sin(frameCount / 5));
-      pop();
-      fadeIn -= 4;
-      if (keyIsPressed && keyCode === 32) {
-        levelFlow.stage = 1;
-        resetAll();
-      }
-    }
-  } else if (levelFlow.stage == 1) {
-
-    planets[0] = new planet(width * 0.3, height * 0.3, 100);
-    planets[1] = new planet(width * 0.7, height * 0.7, 100);
-
-    for (let i = 0; i < 200; i++) {
-      dusts[i] = new spaceDust(random(width));
-    }
-    startPos.x = width / 6;
-    startPos.y = 150;
-    levelMiddle = true;
-
-  } else if (levelFlow.stage == 2) {
-    push();
-    translate(width / 2 - success.width / 2, height / 2);
-    tint(255, 255 - fadeIn);
-    image(success, 0, 8 * sin(frameCount / 5));
-    pop();
-    fadeIn -= 4;
-    levelFlow.successCountdown -= 1;
-
-    if (levelFlow.successCountdown <= 0) {
-      levelIndex += 1;
-      levelFlow.stage = 0;
-      resetAll();
-    }
+  for (let i = 0; i < 200; i++) {
+    dusts[i] = new spaceDust(random(width));
   }
+  startPos.x = width / 6;
+  startPos.y = height * 0.8;
+  startPos.t = radians(-45);
+  levelMiddle = true;
+
 }
 
 function level4() {
-  if (levelFlow.stage == 0) {
-    textAlign(CENTER);
-    push();
-    stroke(255);
-    noFill();
-    translate(width / 2, height / 3);
-    strokeWeight(1);
-    scale(1);
-    textSize(48);
-    text("LEVEL " + levelIndex, 0, 0);
-    noStroke();
-    fill(240);
-    textSize(28);
-    text("Try and achieve orbit around two planets!", 0, 80);
-    textSize(18);
-    text("Bonus: Try and make a figure 8!", 0, 120);
-    pop();
 
+  planets[0] = new planet(width * 0.5, height * 0.5, 200);
+  planets[1] = new planet(width * 0.7, height * 0.6, 30);
 
-    levelFlow.titleCountdown -= 1.5;
-
-    if (levelFlow.titleCountdown <= 0) {
-      push();
-      translate(width / 2 - ready.width / 2, height / 2);
-      tint(255, 255 - fadeIn);
-      image(ready, 0, 8 * sin(frameCount / 5));
-      pop();
-      fadeIn -= 4;
-      if (keyIsPressed && keyCode === 32) {
-        levelFlow.stage = 1;
-        resetAll();
-      }
-    }
-  } else if (levelFlow.stage == 1) {
-
-    planets[0] = new planet(width * 0.5, height * 0.5, 200);
-    planets[1] = new planet(width * 0.7, height * 0.6, 30);
-
-    for (let i = 0; i < 200; i++) {
-      dusts[i] = new spaceDust(random(width));
-    }
-    startPos.x = width / 6;
-    startPos.y = 150;
-    levelMiddle = true;
-
-  } else if (levelFlow.stage == 2) {
-    push();
-    translate(width / 2 - success.width / 2, height / 2);
-    tint(255, 255 - fadeIn);
-    image(success, 0, 8 * sin(frameCount / 5));
-    pop();
-    fadeIn -= 4;
-    levelFlow.successCountdown -= 1;
-
-    if (levelFlow.successCountdown <= 0) {
-      levelIndex += 1;
-      levelFlow.stage = 0;
-      resetAll();
-    }
+  for (let i = 0; i < 200; i++) {
+    dusts[i] = new spaceDust(random(width));
   }
+  startPos.x = width / 6;
+  startPos.y = 150;
+  levelMiddle = true;
+}
+
+function level5() {
+  planets[0] = new planet(width * 0.2, height * 0.7, 80);
+  planets[1] = new planet(width * 0.8, height * 0.3, 50);
+  planets[2] = new planet(width * 0.4, height * 0.6, 40);
+
+  for (let i = 0; i < 200; i++) {
+    dusts[i] = new spaceDust(random(width));
+  }
+  startPos.x = width / 6;
+  startPos.y = 150;
+  levelMiddle = true;
 }
