@@ -23,6 +23,7 @@ let rockets = [];
 let deadRockets = [];
 let trailPoints = [];
 let dusts = [];
+let lostTitles = [];
 let startPos = {
   x: 0,
   y: 0,
@@ -38,6 +39,7 @@ let lost;
 let crash;
 let sprayTitle = [];
 let fadeIn = 800;
+let objectives;
 
 //flow
 let levelIndex = 0;
@@ -64,7 +66,7 @@ let dbMode = false;
 
 
 //sounds
-let explosions = [];
+let explosionSound = [];
 let introSound;
 
 //serial variables
@@ -86,15 +88,18 @@ function preload() {
   gameOver = loadImage('assets/game_over.png');
   crash = loadImage('assets/crash.png');
   lost = loadImage('assets/lost.png');
+  objectives = loadImage('assets/orbit.png');
 
   soundFormats('wav');
-  explosion[0] = loadSound('assets/Explosion_01.wav');
-  explosion[1] = loadSound('assets/Explosion_02.wav');
+  explosionSound[0] = loadSound('assets/Explosion_01.wav');
+  explosionSound[1] = loadSound('assets/Explosion_02.wav');
   introSound = loadSound('assets/Intro.wav');
 }
 
 function setup() {
   createCanvas(browserSize.browserWidth, browserSize.browserHeight);
+
+  introSound.play();
 
   engine = Engine.create();
   world = engine.world;
@@ -124,7 +129,7 @@ function setup() {
 function draw() {
   background(0);
 
-  if (levelFlow.stage == 1) {
+  if (levelIndex > 0) {
 
     noStroke();
     fill(255);
@@ -144,6 +149,15 @@ function draw() {
 
     textAlign(RIGHT);
     text("NEXT LEVEL IN " + levelCountdown + " SECONDS", width - 105, 54);
+    textAlign(CENTER);
+    textSize(25);
+    push();
+    scale(0.5, 0.5);
+    tint(255, 255);
+    translate(-objectives.width / 2, -objectives.height / 2);
+    translate(width, 150);
+    image(objectives, 0, 0);
+    pop();
   }
 
   if (levelIndex == 0) {
@@ -166,6 +180,9 @@ function draw() {
         level5();
       }
       if (levelIndex == 6) {
+        level6();
+      }
+      if (levelIndex == 7) {
         levelIndex = 0;
         setup();
       }
@@ -206,10 +223,8 @@ function draw() {
   }
 
 
-  if (millis() - timer >= 30000) {
-    timer = millis();
+  if (millis() - timer >= 100000) {
     nextLevel();
-    levelCountdown = 30;
   }
 
   if (millis() - secs >= 1000) {
@@ -295,6 +310,10 @@ function drawLevels() {
     }
   }
 
+  for (let i = 0; i < lostTitles.length; i++) {
+    lostTitles[i].render();
+  }
+
 
   // if (keyIsPressed && keyCode === RETURN) {
   //   levelFlow.stage = 1;
@@ -304,10 +323,26 @@ function drawLevels() {
 }
 
 function nextLevel() {
+  timer = millis();
+  levelCountdown = 100;
+
+  levelMiddle = false;
+  resetAll();
+
   levelIndex++;
   console.log(levelIndex);
-  resetAll();
-  levelMiddle = false;
+
+}
+
+function mousePressed() {
+  if (mouseButton === LEFT) {
+    nextLevel();
+  }
+  if (mouseButton === RIGHT) {
+    levelIndex = 6;
+    nextLevel();
+  }
+
 }
 
 function keyPressed() {
@@ -330,7 +365,7 @@ function serialEvent() {
   var inString = serial.readLine();
   // check to see that there's actually a string there:
   if (inString.length > 0) {
-    console.log(inString);
+    // console.log(inString);
     let sensors = split(inString, ",");
     if (sensors.length > 1) {
       distSensor.push(sensors[0] / 10);
@@ -344,6 +379,7 @@ function serialEvent() {
 
 }
 
+
 function rocketLaunch() {
   if (distSensor[distSensor.length - 1] >= 2) {
     readyToLaunch = true;
@@ -354,13 +390,14 @@ function rocketLaunch() {
       if (levelIndex < 1) {
         levelIndex = 1;
         resetAll();
+      } else {
+        powerValue = max(distSensor);
+        rockets.push(new rocket(startPos.x, startPos.y,
+          powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
+        readyToLaunch = false;
+        justLaunched = true;
+        launchDelay = 100;
       }
-      powerValue = max(distSensor);
-      rockets.push(new rocket(startPos.x, startPos.y,
-        powerValue * cos(angleValue + startPos.t), powerValue * sin(angleValue + startPos.t)));
-      readyToLaunch = false;
-      justLaunched = true;
-      launchDelay = 100;
     }
   }
 
@@ -400,13 +437,14 @@ function removeItem(_item, _index) {
 }
 
 function resetAll() {
-  for (let i = 0; i < planets.length; i++) {
+  for (let i = planets.length - 1; i >= 0; i--) {
     planets[i].kill(i);
   }
   for (let i = 0; i < rockets.length; i++) {
     rockets[i].kill(i);
   }
 
+  lostTitles.splice(0, lostTitles.length);
   dusts.splice(0, dusts.length);
   trailPoints.splice(0, trailPoints.length);
 

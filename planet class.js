@@ -9,6 +9,11 @@ class planet {
       g: 255,
       b: 255
     };
+    this.glow = [];
+    for (let i = this.rad; i < this.rad * 1.5; i += 10) {
+      this.glow.push(i);
+    }
+
 
     let mainColor = random(["r", "g", "b"]);
     if (mainColor === "r") {
@@ -45,9 +50,6 @@ class planet {
       }
     }
 
-
-
-
     let params = {
       isStatic: true,
       friction: 0.01,
@@ -81,6 +83,17 @@ class planet {
     let x = this.body.position.x;
     let y = this.body.position.y;
 
+    for (let i = 0; i < this.glow.length; i++) {
+      noFill();
+      stroke(4);
+      stroke(this.color.r, this.color.g, this.color.b, this.rad * 1.5 - this.glow[i]);
+      ellipse(x, y, this.glow[i] * 2, this.glow[i] * 2);
+      this.glow[i] += 0.1;
+      if (this.glow[i] > this.rad * 1.5) {
+        this.glow[i] = this.rad;
+      }
+    }
+
     let diam = this.rad * 2;
     noStroke();
     fill(this.color.r, this.color.g, this.color.b);
@@ -90,7 +103,7 @@ class planet {
   kill(_i) {
     removeItem(1, _i);
     World.remove(world, this.body);
-    // console.log("killing planet");
+    console.log("killing planet" + _i);
   }
 }
 

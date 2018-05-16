@@ -24,7 +24,7 @@ class rocket {
     };
     this.countdown = 100;
 
-    explosion[1].play();
+    explosionSound[1].play();
 
     explosion(_x, _y, powerValue * cos(angleValue + PI), powerValue * sin(angleValue + PI), 2);
 
@@ -40,7 +40,24 @@ class rocket {
     this.countdown -= 1;
 
     if (x > 3000 || x < -1560 || y > 3000 || y < -2100) {
+      let xLost = x;
+      let yLost = y;
+
       this.kill(_i);
+      if (x > width) {
+        xLost = width - 200;
+      }
+      if (x < 0) {
+        xLost = 200;
+      }
+      if (y > height) {
+        yLost = height - 80;
+      }
+      if (y < 0) {
+        yLost = 80;
+      }
+
+      lostTitles.push(new lostText(xLost, yLost));
     }
   }
 
@@ -100,7 +117,7 @@ class rocket {
     let velX = this.body.velocity.x;
     let velY = this.body.velocity.y;
 
-    explosion[0].play();
+    explosionSound[0].play();
 
     removeItem(2, _i);
     World.remove(world, this.body);
@@ -232,4 +249,25 @@ class spaceDust {
     strokeWeight(this.v / 2);
     point(this.x, this.y);
   }
+}
+
+class lostText {
+  constructor(_x, _y) {
+    this.x = _x;
+    this.y = _y;
+
+    this.fade = 255;
+  }
+
+  render() {
+    tint(255, this.fade);
+    push();
+    translate(this.x - lost.width / 2, this.y - lost.height / 2);
+    image(lost, 0, 0);
+    pop();
+    if (this.fade > 0) {
+      this.fade -= 2;
+    }
+  }
+
 }

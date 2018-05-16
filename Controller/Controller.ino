@@ -42,7 +42,7 @@ void loop() {
 
   int pot = analogRead(A0);
 
-  int potValue = map(pot, 691, 374, 45, -45);
+  int potValue = map(pot, 672, 450, 90, -90);
   Serial.println(potValue);
 
   delay(100);
